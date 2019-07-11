@@ -3,98 +3,49 @@
 //  AutoScroller
 //
 //  Created by Aria Bisma Wahyutama on 24/06/19.
-//  Copyright © 2019 SHUBHAM AGARWAL. All rights reserved.
+//  Copyright © 2019 ARIA BISMA WAHYUTAMA. All rights reserved.
 //
 
 import UIKit
 
 class CategoryTableViewController: UITableViewController {
 
-    let categoryDictionary : [String : String] =
-        [
-            "title" : "Category",
-            "detail" : "ini detail category"
-    ]
+    let appCat = ["category1", "category2", "category3", "category4", "category5"]
 
-//    let categoryArray = [
-//        "Category 1",
-//        "Category 2",
-//        "Category 3"
-//    ]
+    var index = 0
+    
+    var category = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tableView.rowHeight = 120.0
     }
 
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return categoryDictionary.count
+        return appCat.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryTable", for: indexPath)
-        cell.textLabel?.text = categoryDictionary["title"]
+        cell.textLabel?.text = appCat[indexPath.row]
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        category = appCat[indexPath.row]
         performSegue(withIdentifier: "categoryDetail", sender: self)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVC = segue.destination as! CategoryDetailViewController
         
-        if let detail = categoryDictionary["detail"] {
-            destinationVC.a = detail
-        }
     }
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        let destinationVC = segue.destination as! SummaryDetailViewController
+        destinationVC.category = category
+        destinationVC.identifier = 4
+        
     }
-    */
-
 }

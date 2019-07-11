@@ -7,13 +7,21 @@
 //
 
 import UIKit
+import RealmSwift
 
 class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    var appTitle = "", appDesc = "", appPrice = 0
     
+    var appTitle = "", appCat = "", appDesc = "", appPrice = 0
+    
+    @IBOutlet weak var forCategory: UILabel!
+    @IBOutlet weak var forTitle: UILabel!
+    @IBOutlet weak var forDesc: UILabel!
+    @IBOutlet weak var forPrice: UILabel!
     @IBOutlet weak var sliderCollectionView: UICollectionView!
     @IBOutlet weak var pageView: UIPageControl!
     @IBOutlet weak var scrollView: UIScrollView!
+    
+    let realm = try! Realm()
     
     var imgArr = [  UIImage(named:"image1"),
                     UIImage(named:"image2"),
@@ -34,7 +42,87 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         sliderCollectionView.dataSource = self
         
         scrollView.contentSize = CGSize(width: self.view.frame.width, height: self.view.frame.height+100)
+        
+        forTitle.text = appTitle
+        forDesc.text = appDesc
+        forPrice.text = String(appPrice)
+        forCategory.text = appCat
+        
         print("print label: \(appTitle)")
+    }
+    
+    
+    @IBAction func addToCartPressed(_ sender: Any) {
+        print("ditekan ke cart \(appTitle), \(appDesc), \(appPrice)")
+        
+        
+    }
+    
+    
+    @IBAction func addToWishlistPressed(_ sender: Any) {
+        print("ditekan ke wishlist \(appTitle), \(appDesc), \(appPrice)")
+        do {
+            try self.realm.write {
+                //additem
+                if realm.isEmpty {
+                    print("jika kosong")
+                    let newItem = Wishlist()
+                    newItem.name = appTitle
+                    newItem.category = appCat
+                    newItem.price = String(appPrice)
+                    realm.add(newItem)
+                    
+                    let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your wishlist", preferredStyle: UIAlertController.Style.alert)
+                    
+                    // add an action (button)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                    
+                    // show the alert
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    let result = checkInside()
+                    if result {
+                        print("Jika ada isinya")
+                        // create the alert
+                        let alert = UIAlertController(title: "Already added", message: "This product already added to your wishlist", preferredStyle: UIAlertController.Style.alert)
+
+                        // add an action (button)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+
+                        // show the alert
+                        self.present(alert, animated: true, completion: nil)
+                    } else {
+                        print("Jika tidak ada isinya")
+                        let newItem = Wishlist()
+                        newItem.name = appTitle
+                        newItem.category = appCat
+                        newItem.price = String(appPrice)
+                        realm.add(newItem)
+                        
+                        let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your wishlist", preferredStyle: UIAlertController.Style.alert)
+                        
+                        // add an action (button)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                        
+                        // show the alert
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
+        } catch {
+            print("Error write realm, \(error)")
+        }
+    }
+    
+    func checkInside() -> Bool {
+        let wishlistResult = realm.objects(Wishlist.self)
+        print("jika isi dari wishlist count\(wishlistResult.count)")
+        for n in 0...wishlistResult.count-1 {
+            if wishlistResult[n].name == appTitle && wishlistResult[n].category == appCat {
+                return true
+            }
+        }
+        return false
     }
     
     @objc func changeImage() {
@@ -79,5 +167,5 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
                 return 0.0
         }
             return cell
-}
+    }
 }

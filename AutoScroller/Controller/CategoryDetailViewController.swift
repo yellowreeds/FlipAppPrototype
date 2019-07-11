@@ -9,15 +9,13 @@
 import UIKit
 
 class CategoryDetailViewController: UIViewController {
-    
-    var a = ""
-    var b = ""
 
+    var category = ""
+    
     @IBOutlet weak var textLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        textLabel.text = a
         
         // Do any additional setup after loading the view.
     }

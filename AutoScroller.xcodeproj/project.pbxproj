@@ -3,19 +3,26 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0EAC6B2A2208AF8A0019BFAB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAC6B292208AF8A0019BFAB /* AppDelegate.swift */; };
 		0EAC6B2C2208AF8A0019BFAB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAC6B2B2208AF8A0019BFAB /* ViewController.swift */; };
 		0EAC6B2F2208AF8A0019BFAB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EAC6B2D2208AF8A0019BFAB /* Main.storyboard */; };
-		0EAC6B312208AF8B0019BFAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EAC6B302208AF8B0019BFAB /* Assets.xcassets */; };
 		0EAC6B342208AF8B0019BFAB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EAC6B322208AF8B0019BFAB /* LaunchScreen.storyboard */; };
+		565DEBFD6CB56A6F9467C506 /* Pods_AutoScroller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4A4D651F71E721FCE41C516 /* Pods_AutoScroller.framework */; };
 		F21BF8FA22C0C3A9001E6804 /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21BF8F922C0C3A9001E6804 /* CategoryTableViewController.swift */; };
 		F21BF8FC22C0D072001E6804 /* CategoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21BF8FB22C0D072001E6804 /* CategoryDetailViewController.swift */; };
-		F262230122C35A0300B06F6E /* SummaryAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F262230022C35A0300B06F6E /* SummaryAppViewController.swift */; };
+		F239F80822CB096200095D05 /* CartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F239F80722CB096200095D05 /* CartViewController.swift */; };
+		F239F80C22CB099100095D05 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F239F80B22CB099100095D05 /* AccountViewController.swift */; };
+		F25AB6CB22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25AB6C922C5E37D001D68D2 /* CustomSummaryAppTableViewCell.swift */; };
+		F25AB6CC22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25AB6CA22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.xib */; };
 		F262230322C35D8400B06F6E /* AppDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F262230222C35D8400B06F6E /* AppDetailViewController.swift */; };
+		F27DDC1822C9AAC2004CF631 /* SummaryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27DDC1722C9AAC2004CF631 /* SummaryDetailViewController.swift */; };
+		F27DDC1A22C9E72A004CF631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F27DDC1922C9E729004CF631 /* Assets.xcassets */; };
+		F282E78822CB1FB40091CF20 /* Wishlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F282E78722CB1FB40091CF20 /* Wishlist.swift */; };
+		F2BC64F522CDBB2D00F69CB7 /* WishlistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC64F422CDBB2D00F69CB7 /* WishlistViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,13 +30,22 @@
 		0EAC6B292208AF8A0019BFAB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0EAC6B2B2208AF8A0019BFAB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0EAC6B2E2208AF8A0019BFAB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0EAC6B302208AF8B0019BFAB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0EAC6B332208AF8B0019BFAB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0EAC6B352208AF8B0019BFAB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		21D1DA0206EAA55FA3A64A3A /* Pods-AutoScroller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoScroller.debug.xcconfig"; path = "Target Support Files/Pods-AutoScroller/Pods-AutoScroller.debug.xcconfig"; sourceTree = "<group>"; };
+		B640BA6405AA2AAB0BE92399 /* Pods-AutoScroller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoScroller.release.xcconfig"; path = "Target Support Files/Pods-AutoScroller/Pods-AutoScroller.release.xcconfig"; sourceTree = "<group>"; };
+		C4A4D651F71E721FCE41C516 /* Pods_AutoScroller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AutoScroller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F21BF8F922C0C3A9001E6804 /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		F21BF8FB22C0D072001E6804 /* CategoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailViewController.swift; sourceTree = "<group>"; };
-		F262230022C35A0300B06F6E /* SummaryAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryAppViewController.swift; sourceTree = "<group>"; };
+		F239F80722CB096200095D05 /* CartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewController.swift; sourceTree = "<group>"; };
+		F239F80B22CB099100095D05 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		F25AB6C922C5E37D001D68D2 /* CustomSummaryAppTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomSummaryAppTableViewCell.swift; path = ../CustomSummaryAppTableViewCell.swift; sourceTree = "<group>"; };
+		F25AB6CA22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CustomSummaryAppTableViewCell.xib; path = ../CustomSummaryAppTableViewCell.xib; sourceTree = "<group>"; };
 		F262230222C35D8400B06F6E /* AppDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailViewController.swift; sourceTree = "<group>"; };
+		F27DDC1722C9AAC2004CF631 /* SummaryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryDetailViewController.swift; sourceTree = "<group>"; };
+		F27DDC1922C9E729004CF631 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F282E78722CB1FB40091CF20 /* Wishlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wishlist.swift; sourceTree = "<group>"; };
+		F2BC64F422CDBB2D00F69CB7 /* WishlistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WishlistViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				565DEBFD6CB56A6F9467C506 /* Pods_AutoScroller.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +65,8 @@
 			children = (
 				0EAC6B282208AF8A0019BFAB /* AutoScroller */,
 				0EAC6B272208AF8A0019BFAB /* Products */,
+				65DC0E3C9C5B44B6589E8CD6 /* Pods */,
+				64A8FC2806E37E522C1D5DB9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,28 +85,67 @@
 				F21BF8FD22C0D085001E6804 /* Controller */,
 				F2C38DC222C2056C00F99F5F /* VIew */,
 				0EAC6B352208AF8B0019BFAB /* Info.plist */,
+				F282E78922CB1FC70091CF20 /* Model */,
 			);
 			path = AutoScroller;
+			sourceTree = "<group>";
+		};
+		64A8FC2806E37E522C1D5DB9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C4A4D651F71E721FCE41C516 /* Pods_AutoScroller.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		65DC0E3C9C5B44B6589E8CD6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				21D1DA0206EAA55FA3A64A3A /* Pods-AutoScroller.debug.xcconfig */,
+				B640BA6405AA2AAB0BE92399 /* Pods-AutoScroller.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		F21BF8FD22C0D085001E6804 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
 				0EAC6B2B2208AF8A0019BFAB /* ViewController.swift */,
+				F2BC64F422CDBB2D00F69CB7 /* WishlistViewController.swift */,
 				F21BF8F922C0C3A9001E6804 /* CategoryTableViewController.swift */,
 				F21BF8FB22C0D072001E6804 /* CategoryDetailViewController.swift */,
-				F262230022C35A0300B06F6E /* SummaryAppViewController.swift */,
 				F262230222C35D8400B06F6E /* AppDetailViewController.swift */,
+				F27DDC1722C9AAC2004CF631 /* SummaryDetailViewController.swift */,
+				F239F80722CB096200095D05 /* CartViewController.swift */,
+				F239F80B22CB099100095D05 /* AccountViewController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		F25AB6CD22C5E386001D68D2 /* Custom Cell Summary */ = {
+			isa = PBXGroup;
+			children = (
+				F25AB6C922C5E37D001D68D2 /* CustomSummaryAppTableViewCell.swift */,
+				F25AB6CA22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.xib */,
+			);
+			path = "Custom Cell Summary";
+			sourceTree = "<group>";
+		};
+		F282E78922CB1FC70091CF20 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F282E78722CB1FB40091CF20 /* Wishlist.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		F2C38DC222C2056C00F99F5F /* VIew */ = {
 			isa = PBXGroup;
 			children = (
 				0EAC6B2D2208AF8A0019BFAB /* Main.storyboard */,
-				0EAC6B302208AF8B0019BFAB /* Assets.xcassets */,
 				0EAC6B322208AF8B0019BFAB /* LaunchScreen.storyboard */,
+				F27DDC1922C9E729004CF631 /* Assets.xcassets */,
+				F25AB6CD22C5E386001D68D2 /* Custom Cell Summary */,
 			);
 			path = VIew;
 			sourceTree = "<group>";
@@ -99,9 +157,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0EAC6B382208AF8B0019BFAB /* Build configuration list for PBXNativeTarget "AutoScroller" */;
 			buildPhases = (
+				1F1D872DA9264284E3E0523A /* [CP] Check Pods Manifest.lock */,
 				0EAC6B222208AF8A0019BFAB /* Sources */,
 				0EAC6B232208AF8A0019BFAB /* Frameworks */,
 				0EAC6B242208AF8A0019BFAB /* Resources */,
+				954F893E3D8E2D32DC99D65A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -152,22 +212,70 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EAC6B342208AF8B0019BFAB /* LaunchScreen.storyboard in Resources */,
-				0EAC6B312208AF8B0019BFAB /* Assets.xcassets in Resources */,
+				F25AB6CC22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.xib in Resources */,
+				F27DDC1A22C9E72A004CF631 /* Assets.xcassets in Resources */,
 				0EAC6B2F2208AF8A0019BFAB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1F1D872DA9264284E3E0523A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AutoScroller-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		954F893E3D8E2D32DC99D65A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AutoScroller/Pods-AutoScroller-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AutoScroller/Pods-AutoScroller-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AutoScroller/Pods-AutoScroller-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0EAC6B222208AF8A0019BFAB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F262230122C35A0300B06F6E /* SummaryAppViewController.swift in Sources */,
+				F25AB6CB22C5E37D001D68D2 /* CustomSummaryAppTableViewCell.swift in Sources */,
+				F2BC64F522CDBB2D00F69CB7 /* WishlistViewController.swift in Sources */,
 				0EAC6B2C2208AF8A0019BFAB /* ViewController.swift in Sources */,
 				F21BF8FC22C0D072001E6804 /* CategoryDetailViewController.swift in Sources */,
 				F262230322C35D8400B06F6E /* AppDetailViewController.swift in Sources */,
+				F239F80822CB096200095D05 /* CartViewController.swift in Sources */,
+				F282E78822CB1FB40091CF20 /* Wishlist.swift in Sources */,
+				F239F80C22CB099100095D05 /* AccountViewController.swift in Sources */,
+				F27DDC1822C9AAC2004CF631 /* SummaryDetailViewController.swift in Sources */,
 				0EAC6B2A2208AF8A0019BFAB /* AppDelegate.swift in Sources */,
 				F21BF8FA22C0C3A9001E6804 /* CategoryTableViewController.swift in Sources */,
 			);
@@ -311,6 +419,7 @@
 		};
 		0EAC6B392208AF8B0019BFAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 21D1DA0206EAA55FA3A64A3A /* Pods-AutoScroller.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -329,6 +438,7 @@
 		};
 		0EAC6B3A2208AF8B0019BFAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B640BA6405AA2AAB0BE92399 /* Pods-AutoScroller.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
