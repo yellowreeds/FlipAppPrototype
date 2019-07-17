@@ -15,4 +15,5 @@ class Wishlist: Object {
     @objc dynamic var category: String = ""
     @objc dynamic var icon: String = ""
     @objc dynamic var desc: String = ""
+    @objc dynamic var account: String = ""
 }

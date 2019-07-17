@@ -19,10 +19,9 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     var productJSON : JSON?
     
     var indeks : Int = 0
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         categoryTable.delegate = self
         categoryTable.dataSource = self
         categoryTable.rowHeight = 70.0
@@ -58,6 +57,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 if "\(productJSON![n]["category_id"])" == "2" {
                     nextVC.appTitle.append("\(productJSON![n]["app_name"])")
                     nextVC.category = "Contacts"
+                    nextVC.image.append("\(productJSON![n]["app_foto"])")
                     nextVC.price.append("\(productJSON![n]["app_harga"])")
                 }
             }
@@ -66,6 +66,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 if productJSON![n]["category_id"] == "3" {
                     nextVC.appTitle.append("\(productJSON![n]["app_name"])")
                     nextVC.category = "Locations"
+                    nextVC.image.append("\(productJSON![n]["app_foto"])")
                     nextVC.price.append("\(productJSON![n]["app_harga"])")
                 }
                 
@@ -75,6 +76,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 if productJSON![n]["category_id"] == "5" {
                     nextVC.appTitle.append("\(productJSON![n]["app_name"])")
                     nextVC.category = "Storage"
+                    nextVC.image.append("\(productJSON![n]["app_foto"])")
                     nextVC.price.append("\(productJSON![n]["app_harga"])")
                 }
             }
@@ -83,6 +85,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 if productJSON![n]["category_id"] == "11" {
                     nextVC.appTitle.append("\(productJSON![n]["app_name"])")
                     nextVC.category = "Android / iOS"
+                    nextVC.image.append("\(productJSON![n]["app_foto"])")
                     nextVC.price.append("\(productJSON![n]["app_harga"])")
                 }
             }
@@ -91,6 +94,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 if productJSON![n]["category_id"] == "13" {
                     nextVC.appTitle.append("\(productJSON![n]["app_name"])")
                     nextVC.category = "Smart Home"
+                    nextVC.image.append("\(productJSON![n]["app_foto"])")
                     nextVC.price.append("\(productJSON![n]["app_harga"])")
                 }
             }

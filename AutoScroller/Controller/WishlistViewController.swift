@@ -8,10 +8,13 @@
 
 import UIKit
 import RealmSwift
+import SwiftyJSON
 
 class WishlistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var refreshControl = UIRefreshControl()
+    
+    var productJSON : JSON?
     
     let realm = try! Realm()
     
@@ -24,6 +27,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print(productJSON!)
         WishlistTableView.delegate = self
         WishlistTableView.dataSource = self
         WishlistTableView.separatorStyle = .none
@@ -50,11 +54,16 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryApp", for: indexPath) as! CustomSummaryAppTableViewCell
-
         
         if let wh = wishlistResult?[indexPath.row] {
             cell.appCategory.text = wh.category
-            cell.appIcon.image = UIImage(named:"imagetest")
+            
+            let url = URL(string: wh.icon)
+            let data = try? Data(contentsOf: url!)
+            
+            if let imageData = data {
+                cell.appIcon.image = UIImage(data: imageData)
+            }
             cell.appPrice.text = wh.price
             cell.appName.text = wh.name
             

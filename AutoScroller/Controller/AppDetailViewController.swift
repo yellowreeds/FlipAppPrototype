@@ -12,7 +12,7 @@ import Kingfisher
 
 class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    var appTitle = "", appCat = "", appDesc = "", appPrice = 0
+    var appTitle = "", appCat = "", appDesc = "", appPrice = 0, appImage = ""
     
     @IBOutlet weak var forCategory: UILabel!
     @IBOutlet weak var forTitle: UILabel!
@@ -45,6 +45,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         forDesc.text = appDesc
         forPrice.text = String(appPrice)
         forCategory.text = appCat
+        
     }
     
     
@@ -52,8 +53,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         print("ditekan ke cart \(appTitle), \(appDesc), \(appPrice)")
         do {
             try self.realm.write {
-                if checkEmpty() {
-                    print("jika cart kosong")
+                if checkEmptyCart() {
                     let newItem = Cart()
                     newItem.name = appTitle
                     newItem.category = appCat
@@ -106,13 +106,14 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
     @IBAction func addToWishlistPressed(_ sender: Any) {
         do {
             try self.realm.write {
-                if checkEmpty() {
-                    print("jika wishlist kosong")
+                if checkEmptyWishlist() {
+                    let wishlistResult = realm.objects(Wishlist.self)
                     let newItem = Wishlist()
                     newItem.name = appTitle
                     newItem.category = appCat
                     newItem.price = String(appPrice)
                     newItem.desc = appDesc
+                    newItem.icon = appImage
                     realm.add(newItem)
                     
                     // create the alert
@@ -140,6 +141,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
                         newItem.category = appCat
                         newItem.price = String(appPrice)
                         newItem.desc = appDesc
+                        newItem.icon = appImage
                         realm.add(newItem)
                         
                         let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your wishlist", preferredStyle: UIAlertController.Style.alert)
@@ -177,18 +179,24 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         return false
     }
     
-    func checkEmpty() -> Bool {
+    func checkEmptyCart() -> Bool {
         let cartResult = realm.objects(Cart.self)
-        let wishlistResult = realm.objects(Wishlist.self)
         if cartResult.count == 0 {
-            return true
-        } else if wishlistResult.count == 0 {
             return true
         } else {
             return false
         }
     }
    
+    func checkEmptyWishlist() -> Bool {
+        let wishlistResult = realm.objects(Wishlist.self)
+        if wishlistResult.count == 0 {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     @objc func changeImage() {
         if counter < imgArr.count {
             let index = IndexPath.init(item: counter, section: 0)

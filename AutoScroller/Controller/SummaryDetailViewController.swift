@@ -13,11 +13,6 @@ import Toast_Swift
 
 class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    let imgArr = [  UIImage(named:"imagetest"),
-                    UIImage(named:"imagetest"),
-                    UIImage(named:"imagetest")
-    ]
-    
     var identifier = 0, index = 0, indexForSegue = 0, category = ""
     
     var appTitle: [String] = [], price: [String] = [], appCategory: [String] = [], image: [String] = []
@@ -58,7 +53,12 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.appCategory.text = "Tidak terkategori"
             }
             cell.appName.text = "\(productJSON!["data"][indexPath.row]["app_name"])"
-            cell.appIcon.image = UIImage(named:"imagetest")
+            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_foto"])")
+            let data = try? Data(contentsOf: url!)
+            
+            if let imageData = data {
+                cell.appIcon.image = UIImage(data: imageData)
+            }
             cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_harga"])"
         } else if identifier == 3 {
             if "\(productJSON!["data"][indexPath.row]["category_id"])" == "2" {
@@ -75,18 +75,27 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.appCategory.text = "Kategori belum ditentukan"
             }
             cell.appName.text = "\(productJSON!["data"][indexPath.row]["app_name"])"
-            cell.appIcon.image = UIImage(named:"imagetest")
+            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_foto"])")
+            let data = try? Data(contentsOf: url!)
+            
+            if let imageData = data {
+                cell.appIcon.image = UIImage(data: imageData)
+            }
             cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_harga"])"
         } else if identifier == 4 {
             if appTitle.count < 1 {
                 cell.appCategory.text = ""
                 cell.appName.text = "No item in this category"
-                //cell.appIcon.image = UIImage(named:)
                 cell.appPrice.text = ""
             } else {
                 cell.appCategory.text = category
                 cell.appName.text = appTitle[indexPath.row]
-                //cell.appIcon.image = UIImage(named:)
+                let url = URL(string: image[indexPath.row])
+                let data = try? Data(contentsOf: url!)
+                
+                if let imageData = data {
+                    cell.appIcon.image = UIImage(data: imageData)
+                }
                 cell.appPrice.text = price[indexPath.row]
             }
         }
@@ -97,6 +106,7 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         indexForSegue = indexPath.row
         if appTitle.count < 1 {
             self.view.makeToast("No Items", duration: 3.0, position: .bottom)
+            tableView.deselectRow(at: indexPath, animated: true)
         } else {
             performSegue(withIdentifier: "detailApp", sender: self)
         }
