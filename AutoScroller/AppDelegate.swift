@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  AutoScroller
 //
-//  Created by SHUBHAM AGARWAL on 04/02/19.
-//  Copyright © 2019 SHUBHAM AGARWAL. All rights reserved.
+//  Created by Aria Bisma Wahyutama on 04/02/19.
+//  Copyright © 2019 ARIA BISMA WAHYUTAMA. All rights reserved.
 //
 
 import UIKit
@@ -13,12 +13,10 @@ import RealmSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        print("realm file location")
-        print(Realm.Configuration.defaultConfiguration.fileURL)
+        print("realm file location \(Realm.Configuration.defaultConfiguration.fileURL)")
         return true
     }
 

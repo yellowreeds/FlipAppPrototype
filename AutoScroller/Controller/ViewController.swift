@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import Toast_Swift
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -19,38 +20,43 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var midLabel: UILabel!
     @IBOutlet weak var midCollection: UICollectionView!
+
+    var productJSON : JSON?
     
-    let DATA_URL = "http://api-flipapp.epizy.com/product?flippAppKey=flipp123"
-    
+    var productCount: Int = 0
     
     let imgArr = [  UIImage(named:"image1"),
                     UIImage(named:"image2"),
                     UIImage(named:"image3")
     ]
     
-    let appName = ["Name1", "Name2", "Name3", "Name4", "Name5", "Name6", "Name7", "Name8", "Name9", "Name10", "Name11"
-    ]
-    
-    let appDescription = ["Desc1", "Desc2", "Desc3", "Desc4", "Desc5", "Desc6", "Desc7", "Desc8", "Desc9", "Desc10", "Desc11"]
-    
-    let appPrice = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000
-    ]
-    
-    let appCat = ["category1", "category1", "category2", "category3", "category2", "category5", "category2", "category1", "category4", "category4", "category3"]
-    
-    
-    
     var timer = Timer()
-    var counter = 0, tag = 0
+    var counter = 0, tag = 0, toDetail = 0
     var labelTitle = "", labelDetail = "", labelPrice = 0, labelCategory = "", identifier2 = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getData()
+        passData()
+        self.view.makeToastActivity(.center)
+
+        if productCount > 0 {
+            print("Test")
+            self.view.hideToastActivity()
+        }
+
+        
         pageView.numberOfPages = imgArr.count
         pageView.currentPage = 0
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.changeImage), userInfo: nil, repeats: true)
         }
+        
+        DispatchQueue.main.async {
+            self.topCollection.reloadData()
+            self.midCollection.reloadData()
+        }
+        
         sliderCollectionView.delegate = self
         topCollection.delegate = self
         midCollection.delegate = self
@@ -59,11 +65,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         topCollection.dataSource = self
         
         scrollView.contentSize = CGSize(width: self.view.frame.width, height: self.view.frame.height+100)
-        
-        //let params : [String:String] = ["flippAppKey" : "flipp123"]
-        
-        //getData(url: DATA_URL)
-    
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -71,29 +73,31 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         // Dispose of any resources that can be recreated.
     }
     
-//    func getData(url : String) {
-//        Alamofire.request(url).responseString { response in
-//            print("Success: \(response.result.isSuccess)")
-//            print("Response String: \(response.result.value)")
-//        }
-//
-//
-//        Alamofire.request(url, method: .get).responseJSON {
-//            response in
-//            if response.result.isSuccess {
-//                print("Success! Got a weather data")
-//
-//                let weatherJSON : JSON = JSON(response.result.value!)
-//                print(weatherJSON)
-//                //self.updateWeatherData(json: weatherJSON)
-//
-//            } else {
-//                print("Error: \(response.result.error)")
-//                //self.cityLabel.text = "Connection Issues"
-//            }
-//        }
-//    }
+    func getData() {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/app?fliptoken=flipp123", method: .get).responseJSON {
+            response in
+            if response.result.isSuccess {
+                print("SUKSES")
+                self.productJSON = JSON(response.result.value!)
+                self.productCount = self.productJSON!["data"].count
+                print(self.productCount)
+                let navController = self.tabBarController!.viewControllers![1] as! UINavigationController
+                let vc = navController.topViewController as! CategoryViewController
+                vc.productJSON = self.productJSON!["data"]
+                
+            } else {
+                print("Error: \(response.result.error)")
+            }
+        }
+    }
     
+    
+    func passData() {
+        let navController = self.tabBarController!.viewControllers![1] as! UINavigationController
+        let vc = navController.topViewController as! CategoryViewController
+        vc.productJSON = productJSON
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "detailApp" {
             let nextVC = segue.destination as! AppDetailViewController
@@ -101,12 +105,15 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             nextVC.appDesc = labelDetail
             nextVC.appPrice = labelPrice
             nextVC.appCat = labelCategory
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto1"])")
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto2"])")
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto3"])")
         } else if segue.identifier == "summaryApp" {
             let nextVC = segue.destination as! SummaryDetailViewController
-            
+            nextVC.productJSON = productJSON
             nextVC.identifier = identifier2
         }
-    }
+    }    
     
     @IBAction func topApplication(_ sender: Any) {
         identifier2 = 2
@@ -119,18 +126,42 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     @IBAction func topAppDetail(_ sender: Any) {
-        labelTitle = appName[(sender as AnyObject).tag!]
-        labelDetail = appDescription[(sender as AnyObject).tag!]
-        labelPrice = appPrice[(sender as AnyObject).tag!]
-        labelCategory = appCat[(sender as AnyObject).tag!]
+        labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
+        labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
+        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_harga"])")!
+        if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "2" {
+            labelCategory = "Contacts"
+        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "3" {
+            labelCategory = "Locations"
+        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "5" {
+            labelCategory = "Storage"
+        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "11" {
+            labelCategory = "Android/IOS"
+        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "13" {
+            labelCategory = "Smart Home"
+        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "0" {
+            labelCategory = "Kategori belum ditentukan"
+        }
+        toDetail = (sender as AnyObject).tag!
+        print("ini toDetail: \(toDetail)")
         performSegue(withIdentifier: "detailApp", sender: self)
     }
     
     @IBAction func topRatedApp(_ sender: Any) {
-        labelTitle = appName[(sender as AnyObject).tag!]
-        labelDetail = appDescription[(sender as AnyObject).tag!]
-        labelPrice = appPrice[(sender as AnyObject).tag!]
-        labelCategory = appCat[(sender as AnyObject).tag!]
+        labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
+        labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
+        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_harga"])")!
+        if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "2" {
+            labelCategory = "Contacts"
+        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "3" {
+            labelCategory = "Locations"
+        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "5" {
+            labelCategory = "Storage"
+        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "11" {
+            labelCategory = "Android/IOS"
+        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "13" {
+            labelCategory = "Smart Home"
+        }
         performSegue(withIdentifier: "detailApp", sender: self)
         
     }
@@ -154,9 +185,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if collectionView == self.sliderCollectionView {
             return imgArr.count
         } else if collectionView == self.topCollection {
-            return appName.count
+            sleep(2)
+            return productCount
         }
-        return appName.count    
+        sleep(2)
+        return productCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -190,7 +223,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             let editButton = UIButton(frame: CGRect(x:0, y:0, width:90,height:90))
            
             editButton.tag = indexPath.row
-            editButton.setImage(UIImage(named: "imagetest.png"), for: .normal)
+        
+            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_foto"])" )
+            let data = try? Data(contentsOf: url!)
+            
+            if let imageData = data {
+                editButton.setImage(UIImage(data: imageData), for: .normal)
+            }
             
             editButton.addTarget(self, action: #selector(topAppDetail), for: UIControl.Event.touchUpInside)
             
@@ -219,7 +258,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             let editButton = UIButton(frame: CGRect(x:0, y:0, width:90,height:90))
             
             editButton.tag = indexPath.row
-            editButton.setImage(UIImage(named: "imagetest.png"), for: .normal)
+            
+            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_foto"])" )
+            let data = try? Data(contentsOf: url!)
+            
+            if let imageData = data {
+                editButton.setImage(UIImage(data: imageData), for: .normal)
+            }
             
             editButton.addTarget(self, action: #selector(topRatedApp), for: UIControl.Event.touchUpInside)
             

@@ -53,7 +53,7 @@
                 <outlet property="appName" destination="XUU-rP-5Fg" id="z1l-dt-T8P"/>
                 <outlet property="appPrice" destination="khM-le-pcn" id="ngo-fF-aJx"/>
             </connections>
-            <point key="canvasLocation" x="177.59999999999999" y="118.96551724137932"/>
+            <point key="canvasLocation" x="139" y="119"/>
         </tableViewCell>
     </objects>
 </document>
