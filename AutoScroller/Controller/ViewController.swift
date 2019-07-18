@@ -23,7 +23,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var midCollection: UICollectionView!
     
     // MARK: - Set variable for JSON and count data from JSON
-    var productJSON : JSON?
+    var productJSON : JSON? {
+        didSet {
+            topCollection.reloadData()
+            midCollection.reloadData()
+            sliderCollectionView.reloadData()
+        }
+    }
+    
     var productCount: Int = 0
         
     // MARK: - Set variable for slide show images, counter and the duration
@@ -61,12 +68,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.changeImage), userInfo: nil, repeats: true)
         }
         
-        // reload the collectionview asynchronously
-        DispatchQueue.main.async {
-            self.topCollection.reloadData()
-            self.midCollection.reloadData()
-        }
-        
         // set delegate to the collection view
         sliderCollectionView.delegate = self
         topCollection.delegate = self
@@ -84,7 +85,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     // MARK: - Function to get data from JSON
     func getData() {
-        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/app?fliptoken=flipp123", method: .get).responseJSON {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/app?fliptoken=flip123", method: .get).responseJSON {
             response in
             if response.result.isSuccess {
                 self.productJSON = JSON(response.result.value!)
@@ -130,14 +131,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             nextVC.appPrice = labelPrice
             nextVC.appCat = labelCategory
             nextVC.appImage = picture
-            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto1"])")
-            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto2"])")
-            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_foto3"])")
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_screen_capture_1"])")
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_screen_capture_2"])")
+            nextVC.imgArr.append("\(productJSON!["data"][toDetail]["app_screen_capture_3"])")
         } else if segue.identifier == "summaryApp" {
             // if user click see all button
             let nextVC = segue.destination as! SummaryDetailViewController
             nextVC.productJSON = productJSON
-            print("ini nextVC.productJSON \(nextVC.productJSON)")
             nextVC.identifier = identifier2
         }
     }
@@ -159,21 +159,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBAction func topAppDetail(_ sender: Any) {
         labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
         labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
-        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_harga"])")!
-        if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "2" {
-            labelCategory = "Contacts"
-        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "3" {
-            labelCategory = "Locations"
-        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "5" {
-            labelCategory = "Storage"
-        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "11" {
-            labelCategory = "Android/IOS"
-        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "13" {
-            labelCategory = "Smart Home"
-        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "0" {
-            labelCategory = "Kategori belum ditentukan"
-        }
-        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_foto"])"
+        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!
+        labelCategory = "\(productJSON!["data"][(sender as AnyObject).tag!]["category_name"])"
+        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_poster"])"
         toDetail = (sender as AnyObject).tag!
         performSegue(withIdentifier: "detailApp", sender: self)
     }
@@ -183,19 +171,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBAction func topRatedApp(_ sender: Any) {
         labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
         labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
-        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_harga"])")!
-        if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "2" {
-            labelCategory = "Contacts"
-        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "3" {
-            labelCategory = "Locations"
-        } else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "5" {
-            labelCategory = "Storage"
-        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "11" {
-            labelCategory = "Android/IOS"
-        }  else if "\(productJSON!["data"][(sender as AnyObject).tag!]["category_id"])" == "13" {
-            labelCategory = "Smart Home"
-        }
-        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_foto"])"
+        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!
+        labelCategory = "\(productJSON!["data"][(sender as AnyObject).tag!]["category_name"])"
+        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_poster"])"
         performSegue(withIdentifier: "detailApp", sender: self)
         
     }
@@ -224,10 +202,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if collectionView == self.sliderCollectionView {
             return imgArr.count
         } else if collectionView == self.topCollection {
-            sleep(2)
             return productCount
         }
-        sleep(2)
         return productCount
     }
     
@@ -278,7 +254,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             editButton.tag = indexPath.row
             
             // add image to button
-            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_foto"])" )
+            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_poster"])" )
             let data = try? Data(contentsOf: url!)
             if let imageData = data {
                 editButton.setImage(UIImage(data: imageData), for: .normal)
@@ -320,7 +296,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             editButton.tag = indexPath.row
             
             // add image to button
-            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_foto"])" )
+            let url = URL(string:"\(productJSON!["data"][indexPath.row]["app_poster"])" )
             let data = try? Data(contentsOf: url!)
             if let imageData = data {
                 editButton.setImage(UIImage(data: imageData), for: .normal)

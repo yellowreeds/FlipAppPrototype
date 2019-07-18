@@ -14,8 +14,9 @@ class Account: Object {
     @objc dynamic var phoneNumber: String = ""
     @objc dynamic var username: String = ""
     @objc dynamic var password: String = ""
-    @objc dynamic var address: String = ""
-    @objc dynamic var gender: String = ""
+    @objc dynamic var gitAddress: String = ""
+    @objc dynamic var emailAddress: String = ""
+    @objc dynamic var companyName: String = ""
     
 }
 

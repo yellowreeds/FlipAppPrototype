@@ -51,48 +51,24 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         
         if identifier == 2 {
             // identifier 2 is top application
-            if "\(productJSON!["data"][indexPath.row]["category_id"])" == "2" {
-                cell.appCategory.text = "Contacts Top"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "3" {
-                cell.appCategory.text = "Locations Top"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "5" {
-                cell.appCategory.text = "Storage Top"
-            }  else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "11" {
-                cell.appCategory.text = "Android/IOS Top"
-            }  else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "13" {
-                cell.appCategory.text = "Smart Home Top"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "0" || "\(productJSON!["data"][indexPath.row]["category_id"])" == "1" {
-                cell.appCategory.text = "Tidak terkategori"
-            }
+            cell.appCategory.text = "\(productJSON!["data"][indexPath.row]["category_name"])"
             cell.appName.text = "\(productJSON!["data"][indexPath.row]["app_name"])"
-            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_foto"])")
+            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_poster"])")
             let data = try? Data(contentsOf: url!)
             if let imageData = data {
                 cell.appIcon.image = UIImage(data: imageData)
             }
-            cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_harga"])"
+            cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_price"])"
         } else if identifier == 3 {
             // identifier 3 is top rated
-            if "\(productJSON!["data"][indexPath.row]["category_id"])" == "2" {
-                cell.appCategory.text = "Contacts Rate"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "3" {
-                cell.appCategory.text = "Locations Rate"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "5" {
-                cell.appCategory.text = "Storage Rate"
-            }  else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "11" {
-                cell.appCategory.text = "Android/IOS Rate"
-            }  else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "13" {
-                cell.appCategory.text = "Smart Home Rate"
-            } else if "\(productJSON!["data"][indexPath.row]["category_id"])" == "0" {
-                cell.appCategory.text = "Kategori belum ditentukan"
-            }
+            cell.appCategory.text = "\(productJSON!["data"][indexPath.row]["category_name"])"
             cell.appName.text = "\(productJSON!["data"][indexPath.row]["app_name"])"
-            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_foto"])")
+            let url = URL(string: "\(productJSON!["data"][indexPath.row]["app_poster"])")
             let data = try? Data(contentsOf: url!)
             if let imageData = data {
                 cell.appIcon.image = UIImage(data: imageData)
             }
-            cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_harga"])"
+            cell.appPrice.text = "\(productJSON!["data"][indexPath.row]["app_price"])"
         } else if identifier == 4 {
             // identifier 4 is category sorting
             if appTitle.count < 1 {
@@ -123,6 +99,7 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         } else {
             performSegue(withIdentifier: "detailApp", sender: self)
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     // number of rows in table view
@@ -136,17 +113,18 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         } else {
             return productJSON!["data"].count
         }
-        
     }
     
-    // MARK: - prepare for segue
+    // MARK: - Prepare for segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
-        
-        destinationVC.appTitle = "\(productJSON!["data"][indexForSegue]["app_name"])"
-        destinationVC.appCat = category
-        destinationVC.appPrice = Int("\(productJSON!["data"][indexForSegue]["app_harga"])")!
-        destinationVC.appDesc = "\(productJSON!["data"][indexForSegue]["app_desc"])"
+        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_1"])")
+        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_2"])")
+        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_3"])")
+        destinationVC.appTitle = "\(productJSON![indexForSegue]["app_name"])"
+        destinationVC.appCat = "\(productJSON![indexForSegue]["category_name"])"
+        destinationVC.appPrice = Int("\(productJSON![indexForSegue]["app_price"])")!
+        destinationVC.appDesc = "\(productJSON![indexForSegue]["app_desc"])"
     }
 
 }

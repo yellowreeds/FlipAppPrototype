@@ -14,11 +14,17 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     // MARK: - IBOutlet for category table
     @IBOutlet weak var categoryTable: UITableView!
     
-    // MARK: - Initialize Categories
-    let category = ["Contacts", "Location", "Storage", "Android / iOS", "Smarthome"]
-    
     // MARK: - Initialize variables to hold JSON
     var productJSON : JSON?
+    
+    private var categoryJSON : JSON? {
+        didSet {
+            categoryTable.reloadData()
+        }
+    }
+    
+    // MARK: - Innitialize variables to count JSON
+    var categoryCount : Int = 0
     
     // MARK: - Initialize variables to identify index
     var indeks : Int = 0
@@ -27,6 +33,9 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //get JSON
+        getData()
+        
         // set delegate and data source
         categoryTable.delegate = self
         categoryTable.dataSource = self
@@ -34,19 +43,29 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
         // set tableview appearance
         categoryTable.rowHeight = 70.0
         categoryTable.separatorStyle = .none
-        
+    }
+    
+    func getData() {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/category?fliptoken=flip123", method: .get).responseJSON {
+            response in
+            if response.result.isSuccess {
+                self.categoryJSON = JSON(response.result.value!)
+            } else {
+                print("Error: \(response.result.error)")
+            }
+        }
     }
     
     // MARK: - Set tableview
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return category.count
+        return categoryJSON?["data"].count ?? 0
     }
     
     // set item on each cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryTable", for: indexPath)
-        cell.textLabel?.text = category[indexPath.row]
+        cell.textLabel?.text = "\(categoryJSON!["data"][indexPath.row]["category_name"])"
         return cell
     }
     
@@ -61,57 +80,14 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let nextVC = segue.destination as! SummaryDetailViewController
         nextVC.identifier = 4
-        if indeks == 0 {
-            // if contact is presssed
-            for n in 0...productJSON!.count-1 {
-                if "\(productJSON![n]["category_id"])" == "2" {
-                    nextVC.appTitle.append("\(productJSON![n]["app_name"])")
-                    nextVC.category = "Contacts"
-                    nextVC.image.append("\(productJSON![n]["app_foto"])")
-                    nextVC.price.append("\(productJSON![n]["app_harga"])")
-                }
-            }
-        } else if indeks == 1 {
-           // if locations is presssed
-            for n in 0...productJSON!.count-1 {
-                if productJSON![n]["category_id"] == "3" {
-                    nextVC.appTitle.append("\(productJSON![n]["app_name"])")
-                    nextVC.category = "Locations"
-                    nextVC.image.append("\(productJSON![n]["app_foto"])")
-                    nextVC.price.append("\(productJSON![n]["app_harga"])")
-                }
-                
-            }
-        } else if indeks == 2 {
-            // if storage is presssed
-            for n in 0...productJSON!.count-1 {
-                if productJSON![n]["category_id"] == "5" {
-                    nextVC.appTitle.append("\(productJSON![n]["app_name"])")
-                    nextVC.category = "Storage"
-                    nextVC.image.append("\(productJSON![n]["app_foto"])")
-                    nextVC.price.append("\(productJSON![n]["app_harga"])")
-                }
-            }
-        } else if indeks == 3 {
-            // if Android / iOS is presssed
-            for n in 0...productJSON!.count-1 {
-                if productJSON![n]["category_id"] == "11" {
-                    nextVC.appTitle.append("\(productJSON![n]["app_name"])")
-                    nextVC.category = "Android / iOS"
-                    nextVC.image.append("\(productJSON![n]["app_foto"])")
-                    nextVC.price.append("\(productJSON![n]["app_harga"])")
-                }
-            }
-        } else if indeks == 4 {
-            // if smart home is presssed
-            for n in 0...productJSON!.count-1 {
-                if productJSON![n]["category_id"] == "13" {
-                    nextVC.appTitle.append("\(productJSON![n]["app_name"])")
-                    nextVC.category = "Smart Home"
-                    nextVC.image.append("\(productJSON![n]["app_foto"])")
-                    nextVC.price.append("\(productJSON![n]["app_harga"])")
-                }
+        for n in 0...productJSON!.count-1 {
+            if "\(productJSON![n]["category_name"])" == "\(categoryJSON!["data"][indeks]["category_name"])" {
+                nextVC.appTitle.append("\(productJSON![n]["app_name"])")
+                nextVC.category = ("\(productJSON![n]["category_name"])")
+                nextVC.image.append("\(productJSON![n]["app_poster"])")
+                nextVC.price.append("\(productJSON![n]["app_price"])")
             }
         }
+        nextVC.productJSON = productJSON!
     }
 }
