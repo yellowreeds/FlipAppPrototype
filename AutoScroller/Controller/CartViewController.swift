@@ -11,47 +11,59 @@ import RealmSwift
 
 class CartViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    // MARK: - Initialize refresh control
     var refreshControl = UIRefreshControl()
     
+    // MARK: - Initialize Realm
     let realm = try! Realm()
     
+    // MARK: - Initialize variables for identification
     var indexForSegue = 0
     
+    // MARK: - Initialize result to load Realm
     var cartResult: Results<Cart>?
     
+    // MARK: - IBOutlet for cart table view
     @IBOutlet weak var cartTableView: UITableView!
 
-    
+    // MARK: - Set up the view
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // set delegate and tablesource
         cartTableView.delegate = self
         cartTableView.dataSource = self
+        
+        // set tableview appearance
         cartTableView.separatorStyle = .none
         cartTableView.rowHeight = 120.0
         
-        cartTableView.rowHeight = 120.0
-        
+        // register custom cell
         cartTableView.register(UINib(nibName: "CartTableViewCell", bundle: nil), forCellReuseIdentifier: "cartCell")
         
+        // set refreshcontrol function
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refreshControl.addTarget(self, action: #selector(loadCategories), for: UIControl.Event.valueChanged)
+        refreshControl.addTarget(self, action: #selector(loadCart), for: UIControl.Event.valueChanged)
         cartTableView.addSubview(refreshControl)
         
-        loadCategories()
+        // load categories from Realm
+        loadCart()
     }
     
-    @objc private func loadCategories() {
+    // MARK: - Function to load cart from Realm
+    @objc private func loadCart() {
         cartResult = realm.objects(Cart.self)
         self.cartTableView.reloadData()
         refreshControl.endRefreshing()
     }
     
-    
+    // MARK: - set table view
+    // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cartResult?.count ?? 1
     }
     
+    // set item on row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cartCell", for: indexPath) as! CartTableViewCell
         
@@ -65,7 +77,13 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
+    // when cell is selected
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
     
+    // MARK: - Swipe to delete function
+    // set swipe to delete function
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
             if let cart = self.cartResult?[indexPath.row] {
@@ -98,10 +116,5 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete])
         swipeActionConfig.performsFirstActionWithFullSwipe = true
         return swipeActionConfig
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
+    }    
 }

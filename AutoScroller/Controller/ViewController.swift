@@ -25,9 +25,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     // MARK: - Set variable for JSON and count data from JSON
     var productJSON : JSON?
     var productCount: Int = 0
-    
-    
-    
+        
     // MARK: - Set variable for slide show images, counter and the duration
     let imgArr: [String] =  ["http://localhost/flipapp/assets/img/poster/default.jpg",
                              "http://localhost/flipapp/assets/img/poster/default.jpg",
