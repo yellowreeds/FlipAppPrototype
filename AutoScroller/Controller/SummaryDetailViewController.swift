@@ -17,7 +17,7 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
     var identifier = 0, index = 0, indexForSegue = 0, category = ""
     
     // MARK: - Initialize array for displaying in tableview
-    var appTitle: [String] = [], price: [String] = [], appCategory: [String] = [], image: [String] = []
+    var appTitle: [String] = [], price: [String] = [], image: [String] = [], appID: [String] = [], appScreenshoot1: [String] = [], appScreenshoot2: [String] = [], appScreenshoot3: [String] = [], appDesc: [String] = []
     
     // MARK: - Initialize variables for JSON
     var productJSON : JSON?
@@ -93,10 +93,18 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
     // when items is selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         indexForSegue = indexPath.row
-        if productJSON!["data"].count < 1 {
-            self.view.makeToast("No Items", duration: 3.0, position: .bottom)
+        if identifier == 4 {
+            if appTitle.count < 1 {
+                self.view.makeToast("No Items", duration: 3.0, position: .bottom)
+            } else {
+                performSegue(withIdentifier: "detailApp", sender: self)
+            }
         } else {
-            performSegue(withIdentifier: "detailApp", sender: self)
+            if productJSON!["data"].count < 1 {
+                self.view.makeToast("No Items", duration: 3.0, position: .bottom)
+            } else {
+                performSegue(withIdentifier: "detailApp", sender: self)
+            }
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -117,14 +125,26 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - Prepare for segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
-        destinationVC.appID = "\(productJSON!["data"][indexForSegue]["app_id"])"
-        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_1"])")
-        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_2"])")
-        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_3"])")
-        destinationVC.appTitle = "\(productJSON!["data"][indexForSegue]["app_name"])"
-        destinationVC.appCat = "\(productJSON!["data"][indexForSegue]["category_name"])"
-        destinationVC.appPrice = Int("\(productJSON!["data"][indexForSegue]["app_price"])")!
-        destinationVC.appDesc = "\(productJSON!["data"][indexForSegue]["app_desc"])"
+        if identifier == 4 {
+            destinationVC.appID = appID[indexForSegue]
+            destinationVC.imgArr.append(appScreenshoot1[indexForSegue])
+            destinationVC.imgArr.append(appScreenshoot2[indexForSegue])
+            destinationVC.imgArr.append(appScreenshoot3[indexForSegue])
+            destinationVC.appTitle = appTitle[indexForSegue]
+            destinationVC.appCat = category
+            destinationVC.appPrice = Int(price[indexForSegue])!
+            destinationVC.appDesc = appDesc[indexForSegue]
+        } else {
+            destinationVC.appID = "\(productJSON!["data"][indexForSegue]["app_id"])"
+            destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_1"])")
+            destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_2"])")
+            destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_3"])")
+            destinationVC.appTitle = "\(productJSON!["data"][indexForSegue]["app_name"])"
+            destinationVC.appCat = "\(productJSON!["data"][indexForSegue]["category_name"])"
+            destinationVC.appPrice = Int("\(productJSON!["data"][indexForSegue]["app_price"])")!
+            destinationVC.appDesc = "\(productJSON!["data"][indexForSegue]["app_desc"])"
+        }
+        
     }
 
 }

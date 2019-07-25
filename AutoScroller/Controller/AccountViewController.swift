@@ -27,6 +27,7 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: - Initialize menu for account settings
     let menu = ["Account", "Edit Profile", "Help", "Logout"]
+    let menuIcon = ["accountsetting", "accountedit", "help", "logout"]
     
     // MARK: - Initialize variable for indentification
     var identifier = 0
@@ -45,6 +46,9 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
         // set delegate and data source
         accountTableView.delegate = self
         accountTableView.dataSource = self
+        
+        
+        
         
         // register custom cell content
         accountTableView.register(UINib(nibName: "AccountTableViewCell", bundle: nil), forCellReuseIdentifier: "accountCell")
@@ -76,6 +80,7 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "accountCell", for: indexPath) as! AccountTableViewCell
             cell.accountSetting.text = menu[indexPath.row]
+            cell.imageAccount.image = UIImage(named: menuIcon[indexPath.row])
             accountTableView.rowHeight = 70.0
             return cell
         }

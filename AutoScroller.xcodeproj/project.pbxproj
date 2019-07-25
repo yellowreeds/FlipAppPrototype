@@ -12,6 +12,7 @@
 		0EAC6B2F2208AF8A0019BFAB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EAC6B2D2208AF8A0019BFAB /* Main.storyboard */; };
 		0EAC6B342208AF8B0019BFAB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EAC6B322208AF8B0019BFAB /* LaunchScreen.storyboard */; };
 		565DEBFD6CB56A6F9467C506 /* Pods_AutoScroller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4A4D651F71E721FCE41C516 /* Pods_AutoScroller.framework */; };
+		F203F01022E98AD5000BDD29 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F203F00F22E98AD5000BDD29 /* Transaction.swift */; };
 		F219FA1D22D73C0E00648BCA /* Cart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F219FA1C22D73C0E00648BCA /* Cart.swift */; };
 		F22ACF1422D82B7A0009EE41 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22ACF1322D82B7A0009EE41 /* Account.swift */; };
 		F22ACF1722D8355B0009EE41 /* CartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22ACF1522D8355B0009EE41 /* CartTableViewCell.swift */; };
@@ -44,6 +45,7 @@
 		21D1DA0206EAA55FA3A64A3A /* Pods-AutoScroller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoScroller.debug.xcconfig"; path = "Target Support Files/Pods-AutoScroller/Pods-AutoScroller.debug.xcconfig"; sourceTree = "<group>"; };
 		B640BA6405AA2AAB0BE92399 /* Pods-AutoScroller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoScroller.release.xcconfig"; path = "Target Support Files/Pods-AutoScroller/Pods-AutoScroller.release.xcconfig"; sourceTree = "<group>"; };
 		C4A4D651F71E721FCE41C516 /* Pods_AutoScroller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AutoScroller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F203F00F22E98AD5000BDD29 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		F219FA1C22D73C0E00648BCA /* Cart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cart.swift; sourceTree = "<group>"; };
 		F22ACF1322D82B7A0009EE41 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		F22ACF1522D8355B0009EE41 /* CartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewCell.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				F219FA1C22D73C0E00648BCA /* Cart.swift */,
 				F22ACF1322D82B7A0009EE41 /* Account.swift */,
 				F2928EDC22D88D6500136AD0 /* Product.swift */,
+				F203F00F22E98AD5000BDD29 /* Transaction.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -305,6 +308,7 @@
 				F22ACF1F22D8688C0009EE41 /* AccountHeaderTableViewCell.swift in Sources */,
 				F2928EDD22D88D6500136AD0 /* Product.swift in Sources */,
 				F262230322C35D8400B06F6E /* AppDetailViewController.swift in Sources */,
+				F203F01022E98AD5000BDD29 /* Transaction.swift in Sources */,
 				F239F80822CB096200095D05 /* CartViewController.swift in Sources */,
 				F282E78822CB1FB40091CF20 /* Wishlist.swift in Sources */,
 				F219FA1D22D73C0E00648BCA /* Cart.swift in Sources */,

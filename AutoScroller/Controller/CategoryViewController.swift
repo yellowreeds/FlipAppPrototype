@@ -86,6 +86,11 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
                 nextVC.category = ("\(productJSON![n]["category_name"])")
                 nextVC.image.append("\(productJSON![n]["app_poster"])")
                 nextVC.price.append("\(productJSON![n]["app_price"])")
+                nextVC.appID.append("\(productJSON![n]["app_id"])")
+                nextVC.appScreenshoot1.append("\(productJSON![n]["app_screen_capture_1"])")
+                nextVC.appScreenshoot2.append("\(productJSON![n]["app_screen_capture_2"])")
+                nextVC.appScreenshoot3.append("\(productJSON![n]["app_screen_capture_3"])")
+                nextVC.appDesc.append("\(productJSON![n]["app_desc"])")
             }
         }
         nextVC.productJSON = productJSON!

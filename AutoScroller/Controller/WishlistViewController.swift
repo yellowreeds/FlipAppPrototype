@@ -19,12 +19,15 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     // MARK: - Intialize variables for catch JSON
     var productJSON : JSON?
+    var productCount : Int = 0
     
     var wishlistJSON : JSON? {
         didSet {
             WishlistTableView.reloadData()
         }
     }
+    
+    
     
     // MARK: - Initialize Realm
     let realm = try! Realm()
@@ -37,16 +40,30 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     // MARK: - Initialize results for load data from Realm
     var wishlistResult: Results<Wishlist>?
+    var accountResult: Results<Account>?
+    var userid: String = ""
+    
+    override func viewWillAppear(_ animated: Bool) {
+        accountResult = realm.objects(Account.self)
+        if accountResult!.count > 0 {
+            if let account = accountResult?[0] {
+                userid = account.userID
+                print("user id: \(userid)")
+            }
+        }
+    }
     
     // MARK: - Set IBOutlet for tableview
     @IBOutlet weak var WishlistTableView: UITableView!
+    
+    
     
     // MARK: - Set Initialview
     override func viewDidLoad() {
         super.viewDidLoad()
         
         getData()
-        
+        productCount = productJSON!.count
         // MARK: Set and register the tableview
         // set delegate and data source
         WishlistTableView.delegate = self
@@ -72,7 +89,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     // MARK: - To load wishlist from API
     func getData() {
-        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/wishlist?fliptoken=flip123&user_id=1", method: .get).responseJSON {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/wishlist?fliptoken=flip123&user_id=\(userid)", method: .get).responseJSON {
             response in
             if response.result.isSuccess {
                 self.wishlistJSON = JSON(response.result.value!)
@@ -124,42 +141,43 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     // set the swipe to delete function
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
-            if let wishlist = self.wishlistResult?[indexPath.row] {
                 // create the alert
-                let alert = UIAlertController(title: "Wishlist Delete", message: "Are you sure to delete this product from wishlist?", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "Wishlist Delete", message: "Are you sure to delete this product from wishlist?", preferredStyle: UIAlertController.Style.alert)
+            
+            // add the actions (buttons)
+            alert.addAction(UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: { action in
+                self.view.makeToastActivity(.center)
                 
-                // add the actions (buttons)
-                alert.addAction(UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: { action in
-                    self.view.makeToastActivity(.center)
-                    
-                    let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist/delete"
-                    let parameters: Parameters = ["fliptoken" : "flip123", "wishlist_id" : self.wishlistID]
-                    
-                    Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
-                        if response.result.isSuccess {
-                            do {
-                                try self.realm.write {
-                                    self.realm.delete(wishlist)
+                let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist/delete"
+                let parameters: Parameters = ["fliptoken" : "flip123", "wishlist_id" : self.wishlistID]
+                
+                Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
+                    if response.result.isSuccess {
+                        if self.wishlistResult!.count > 0 {
+                            if let wishlist = self.wishlistResult?[indexPath.row] {
+                                do {
+                                    try self.realm.write {
+                                        self.realm.delete(wishlist)
+                                    }
+                                } catch {
+                                    print("Error write realm, \(error)")
                                 }
-                            } catch {
-                                print("Error write realm, \(error)")
                             }
-                            self.loadWishlistFromAPI()
-                            self.view.hideToastActivity()
-                        } else {
-                            print("Error \(response.result.error)")
                         }
+                        self.loadWishlistFromAPI()
+                        self.view.hideToastActivity()
+                    } else {
+                        print("Error \(response.result.error)")
                     }
-                    completionHandler(true)
-                }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {action in
-                    completionHandler(false)
-                }))
-                
-                // show the alert
-                self.present(alert, animated: true, completion: nil)
-                
-            }
+                }
+                completionHandler(true)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {action in
+                completionHandler(false)
+            }))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)
         }
         delete.image = UIImage(named: "erase")
         
@@ -172,16 +190,39 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         indexForSegue = indexPath.row
         performSegue(withIdentifier: "wishlistDetail", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     // prepare the segue when cell is selected
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
-        if let wh = wishlistResult?[indexForSegue] {
-            destinationVC.appTitle = wh.name
-            destinationVC.appCat = wh.category
-            destinationVC.appPrice = Int(wh.price)!
-            destinationVC.appDesc = wh.desc
+        destinationVC.appID = "\(wishlistJSON!["data"][indexForSegue]["app_id"])"
+        if wishlistResult!.count > 0 {
+            if let wh = wishlistResult?[indexForSegue] {
+                destinationVC.appTitle = wh.name
+                destinationVC.appCat = wh.category
+                destinationVC.appPrice = Int(wh.price)!
+                destinationVC.appDesc = wh.desc
+                destinationVC.imgArr.append(wh.poster1)
+                destinationVC.imgArr.append(wh.poster2)
+                destinationVC.imgArr.append(wh.poster3)
+            }
+        } else {
+            for n in 0...productCount-1 {
+                if "\(productJSON![n]["app_id"])" == "\(wishlistJSON!["data"][indexForSegue]["app_id"])" {
+                    destinationVC.appDesc = "\(productJSON![n]["app_desc"])"
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_1"])")
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_2"])")
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_3"])")
+                }
+                destinationVC.appTitle = "\(wishlistJSON!["data"][indexForSegue]["app_name"])"
+                destinationVC.appCat = "\(wishlistJSON!["data"][indexForSegue]["category_name"])"
+                destinationVC.appPrice = Int("\(wishlistJSON!["data"][indexForSegue]["app_price"])")!
+                
+                
+            }
+            
         }
+        
     }
 }

@@ -25,6 +25,21 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
     @IBOutlet weak var pageView: UIPageControl!
     @IBOutlet weak var scrollView: UIScrollView!
     
+    
+    var accountResult: Results<Account>?
+    var userid: String = ""
+    
+    override func viewWillAppear(_ animated: Bool) {
+        accountResult = realm.objects(Account.self)
+        if accountResult!.count > 0 {
+            if let account = accountResult?[0] {
+                userid = account.userID
+                print("user id: \(userid)")
+            }
+        }
+    }
+    
+    
     // MARK: - Initialize Realm
     let realm = try! Realm()
     
@@ -61,7 +76,17 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
     
     // MARK: - Function when add to cart is pressed
     @IBAction func addToCartPressed(_ sender: Any) {
-        // write data to Realm
+        let url = "https://amentiferous-grass.000webhostapp.com/api/cart"
+        let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : userid, "app_id" : appID]
+        
+        Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
+            if response.result.isSuccess {
+                print("ini hasil response data: \(response.result)")
+            } else {
+                print("Error \(response.result.error)")
+            }
+        }
+        
         do {
             try self.realm.write {
                 if checkEmptyCart() {
@@ -71,44 +96,31 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
                     newItem.category = appCat
                     newItem.price = String(appPrice)
                     newItem.desc = appDesc
+                    newItem.icon = appImage
+                    newItem.poster1 = imgArr[0]
+                    newItem.poster2 = imgArr[1]
+                    newItem.poster3 = imgArr[2]
                     realm.add(newItem)
                     
-                    // create the alert
-                    let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your cart.", preferredStyle: UIAlertController.Style.alert)
-                    
-                    // add an action (button)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                    
-                    // show the alert
-                    self.present(alert, animated: true, completion: nil)
+                    showAlertUI(headTitle: "Sucessfully Added", message: "This product is successfully added to your cart", title: "OK")
                 } else {
-                    let result = checkInsideCart()
+                    let result = checkInsideWishlist()
                     if result {
-                        // check if items already added to Cart
-                        // create the alert
-                        let alert = UIAlertController(title: "Already added", message: "This product already added to your cart", preferredStyle: UIAlertController.Style.alert)
-                        
-                        // add an action (button)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                        
-                        // show the alert
-                        self.present(alert, animated: true, completion: nil)
+                        // check if items already added to Wishlist
+                        showAlertUI(headTitle: "Already Added", message: "This product already added to your cart", title: "OK")
                     } else {
                         let newItem = Cart()
                         newItem.name = appTitle
                         newItem.category = appCat
                         newItem.price = String(appPrice)
                         newItem.desc = appDesc
+                        newItem.icon = appImage
+                        newItem.poster1 = imgArr[0]
+                        newItem.poster2 = imgArr[1]
+                        newItem.poster3 = imgArr[2]
                         realm.add(newItem)
                         
-                        // create the alert
-                        let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your cart.", preferredStyle: UIAlertController.Style.alert)
-                        
-                        // add an action (button)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                        
-                        // show the alert
-                        self.present(alert, animated: true, completion: nil)
+                        showAlertUI(headTitle: "Successfully Added", message: "This product is successfully added to your cart", title: "OK")
                     }
                 }
             }
@@ -152,7 +164,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
     // MARK: - Function when add to wishlist is pressed
     @IBAction func addToWishlistPressed(_ sender: Any) {
         let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist"
-        let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : "1", "app_id" : appID]
+        let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : userid, "app_id" : appID]
         
         Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
             if response.result.isSuccess {

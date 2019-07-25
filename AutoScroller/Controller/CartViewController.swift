@@ -8,11 +8,27 @@
 
 import UIKit
 import RealmSwift
+import SwiftyJSON
+import Alamofire
+import Toast_Swift
 
 class CartViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Initialize refresh control
     var refreshControl = UIRefreshControl()
+    
+    // MARK: - Intialize variables for catch JSON
+    var productJSON : JSON?
+    var productCount : Int = 0
+    
+    var cartJSON : JSON? {
+        didSet {
+            cartTableView.reloadData()
+        }
+    }
+    
+    // MARK: - Initialize cart id
+    var cartID = ""
     
     // MARK: - Initialize Realm
     let realm = try! Realm()
@@ -23,6 +39,20 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: - Initialize result to load Realm
     var cartResult: Results<Cart>?
     
+    var accountResult: Results<Account>?
+    var userid: String = ""
+    
+    override func viewWillAppear(_ animated: Bool) {
+        accountResult = realm.objects(Account.self)
+        if accountResult!.count > 0 {
+            if let account = accountResult?[0] {
+                userid = account.userID
+                print("user id: \(userid)")
+            }
+        }
+    }
+    
+    
     // MARK: - IBOutlet for cart table view
     @IBOutlet weak var cartTableView: UITableView!
 
@@ -30,25 +60,41 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        getData()
+        productCount = productJSON!.count
+        
         // set delegate and tablesource
         cartTableView.delegate = self
         cartTableView.dataSource = self
         
         // set tableview appearance
         cartTableView.separatorStyle = .none
-        cartTableView.rowHeight = 120.0
+        cartTableView.rowHeight = 358.0
         
         // register custom cell
         cartTableView.register(UINib(nibName: "CartTableViewCell", bundle: nil), forCellReuseIdentifier: "cartCell")
         
         // set refreshcontrol function
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refreshControl.addTarget(self, action: #selector(loadCart), for: UIControl.Event.valueChanged)
+        refreshControl.addTarget(self, action: #selector(loadCartFromAPI), for: UIControl.Event.valueChanged)
         cartTableView.addSubview(refreshControl)
         
-        // load categories from Realm
-        loadCart()
+        cartResult = realm.objects(Cart.self)
+        loadCartFromAPI()
     }
+    
+    // MARK: - To load cart from API
+    func getData() {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/cart?fliptoken=flip123&user_id=\(userid)", method: .get).responseJSON {
+            response in
+            if response.result.isSuccess {
+                self.cartJSON = JSON(response.result.value!)
+            } else {
+                print("Error: \(response.result.error)")
+            }
+        }
+    }
+    
     
     // MARK: - Function to load cart from Realm
     @objc private func loadCart() {
@@ -57,28 +103,43 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         refreshControl.endRefreshing()
     }
     
+    // MARK: - To load wishlist from API
+    @objc private func loadCartFromAPI() {
+        getData()
+        self.cartTableView.reloadData()
+        refreshControl.endRefreshing()
+    }
+    
     // MARK: - set table view
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cartResult?.count ?? 1
+        return cartJSON?["data"].count ?? 0
     }
     
     // set item on row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        cartID = "\(cartJSON!["data"][indexPath.row]["cart_id"])"
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cartCell", for: indexPath) as! CartTableViewCell
         
-        if let c = cartResult?[indexPath.row] {
-            cell.appCategory.text = c.category
-            cell.appImage.image = UIImage(named:"imagetest")
-            cell.appPrice.text = c.price
-            cell.appName.text = c.name
-            
+        cell.appCategory.text = "\(cartJSON!["data"][indexPath.row]["category_name"])"
+        let url = URL(string: "\(cartJSON!["data"][indexPath.row]["app_poster"])")
+        let data = try? Data(contentsOf: url!)
+        
+        if let imageData = data {
+            cell.appImage.image = UIImage(data: imageData)
         }
+        cell.appPrice.text = "\(cartJSON!["data"][indexPath.row]["app_price"])"
+        cell.appName.text = "\(cartJSON!["data"][indexPath.row]["app_name"])"
+        
         return cell
     }
     
     // when cell is selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        indexForSegue = indexPath.row
+        performSegue(withIdentifier: "cartDetail", sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -86,35 +147,82 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
     // set swipe to delete function
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
-            if let cart = self.cartResult?[indexPath.row] {
-                // create the alert
-                let alert = UIAlertController(title: "Wishlist Delete", message: "Are you sure to delete this product from wishlist?", preferredStyle: UIAlertController.Style.alert)
+            // create the alert
+            let alert = UIAlertController(title: "Cart Delete", message: "Are you sure to delete this product from cart?", preferredStyle: UIAlertController.Style.alert)
+            
+            // add the actions (buttons)
+            alert.addAction(UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: { action in
+                self.view.makeToastActivity(.center)
                 
-                // add the actions (buttons)
-                alert.addAction(UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: { action in
-                    do {
-                        try self.realm.write {
-                            self.realm.delete(cart)
+                let url = "https://amentiferous-grass.000webhostapp.com/api/cart/delete"
+                let parameters: Parameters = ["fliptoken" : "flip123", "cart_id" : self.cartID]
+                
+                Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
+                    if response.result.isSuccess {
+                        if self.cartResult!.count > 0 {
+                            if let cart = self.cartResult?[indexPath.row] {
+                                do {
+                                    try self.realm.write {
+                                        self.realm.delete(cart)
+                                    }
+                                } catch {
+                                    print("Error write realm, \(error)")
+                                }
+                            }
                         }
-                    } catch {
-                        print("Error write realm, \(error)")
+                        self.loadCartFromAPI()
+                        self.view.hideToastActivity()
+                    } else {
+                        print("Error \(response.result.error)")
                     }
-                    completionHandler(true)
-                    self.cartTableView.reloadData()
-                }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {action in
-                    completionHandler(false)
-                }))
-                
-                // show the alert
-                self.present(alert, animated: true, completion: nil)
-                
-            }
+                }
+                completionHandler(true)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {action in
+                completionHandler(false)
+            }))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)
         }
         delete.image = UIImage(named: "erase")
         
         let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete])
         swipeActionConfig.performsFirstActionWithFullSwipe = true
         return swipeActionConfig
-    }    
+    }
+    
+    // prepare the segue when cell is selected
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! AppDetailViewController
+        destinationVC.appID = "\(cartJSON!["data"][indexForSegue]["app_id"])"
+        if cartResult!.count > 0 {
+            if let cart = cartResult?[indexForSegue] {
+                destinationVC.appTitle = cart.name
+                destinationVC.appCat = cart.category
+                destinationVC.appPrice = Int(cart.price)!
+                destinationVC.appDesc = cart.desc
+                destinationVC.imgArr.append(cart.poster1)
+                destinationVC.imgArr.append(cart.poster2)
+                destinationVC.imgArr.append(cart.poster3)
+            }
+        } else {
+            for n in 0...productCount-1 {
+                if "\(productJSON![n]["app_id"])" == "\(cartJSON!["data"][indexForSegue]["app_id"])" {
+                    destinationVC.appDesc = "\(productJSON![n]["app_desc"])"
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_1"])")
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_2"])")
+                    destinationVC.imgArr.append("\(productJSON![n]["app_screen_capture_3"])")
+                }
+                destinationVC.appTitle = "\(cartJSON!["data"][indexForSegue]["app_name"])"
+                destinationVC.appCat = "\(cartJSON!["data"][indexForSegue]["category_name"])"
+                destinationVC.appPrice = Int("\(cartJSON!["data"][indexForSegue]["app_price"])")!
+                
+                
+            }
+            
+        }
+        
+    }
+    
 }

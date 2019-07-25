@@ -31,6 +31,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }
     
+    var userid: String = ""
+    
     var productCount: Int = 0
         
     // MARK: - Set variable for slide show images, counter and the duration
@@ -53,11 +55,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // MARK: Setting homescreen
+        
         // get data from API
         getData()
-        
         // create toast activity to wait for API to load
         self.view.makeToastActivity(.center)
         
@@ -90,7 +91,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             if response.result.isSuccess {
                 self.productJSON = JSON(response.result.value!)
                 self.productCount = self.productJSON!["data"].count
-                
+                self.sendToWishlistViewController()
                 // to hide toast activity if json is fully loaded.
                 if self.productCount > 0 {
                     self.view.hideToastActivity()
@@ -98,6 +99,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 
                 self.sendToCategoryViewController()
                 self.sendToWishlistViewController()
+                self.sendToCartViewController()
                 
             } else {
                 print("Error: \(response.result.error)")
@@ -118,6 +120,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func sendToWishlistViewController() {
         let navControllerWishlist = self.tabBarController!.viewControllers![2] as! UINavigationController
         let toControllerWishlist = navControllerWishlist.topViewController as! WishlistViewController
+        toControllerWishlist.productJSON = productJSON!["data"]
+    }
+    
+    // to cart
+    func sendToCartViewController() {
+        let navControllerWishlist = self.tabBarController!.viewControllers![3] as! UINavigationController
+        let toControllerWishlist = navControllerWishlist.topViewController as! CartViewController
         toControllerWishlist.productJSON = productJSON!["data"]
     }
     

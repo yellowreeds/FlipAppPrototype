@@ -41,7 +41,7 @@
                 <outlet property="accountSetting" destination="FeH-Zt-GfN" id="TQY-lq-peU"/>
                 <outlet property="imageAccount" destination="aJf-t7-4kQ" id="HjI-y0-EhN"/>
             </connections>
-            <point key="canvasLocation" x="47.826086956521742" y="93.75"/>
+            <point key="canvasLocation" x="-197" y="96"/>
         </tableViewCell>
     </objects>
 </document>

@@ -12,10 +12,10 @@ class Cart: Object {
     @objc dynamic var name: String = ""
     @objc dynamic var price: String = ""
     @objc dynamic var category: String = ""
-    @objc dynamic var customerName: String = ""
-    @objc dynamic var transactionStatus: Bool = false
-    @objc dynamic var shippingMethod: String = ""
-    @objc dynamic var billingAddress: String = ""
     @objc dynamic var icon: String = ""
+    @objc dynamic var poster1: String = ""
+    @objc dynamic var poster2: String = ""
+    @objc dynamic var poster3: String = ""
     @objc dynamic var desc: String = ""
+    @objc dynamic var account: String = ""
 }

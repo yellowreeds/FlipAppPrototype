@@ -674,6 +674,7 @@
                     <navigationItem key="navigationItem" title="Cart" id="VHR-Ik-SeF"/>
                     <connections>
                         <outlet property="cartTableView" destination="hV8-8A-XM2" id="9mK-M2-UQe"/>
+                        <segue destination="xDZ-Cw-V8C" kind="show" identifier="cartDetail" id="CcZ-rX-8SY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GdE-3E-RE6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -746,7 +747,7 @@
         <image name="wishlist" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ei0-ao-T5m"/>
+        <segue reference="CcZ-rX-8SY"/>
         <segue reference="asj-9P-AeI"/>
     </inferredMetricsTieBreakers>
 </document>
