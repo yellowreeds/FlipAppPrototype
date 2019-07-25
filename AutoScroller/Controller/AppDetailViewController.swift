@@ -9,11 +9,12 @@
 import UIKit
 import RealmSwift
 import Kingfisher
+import Alamofire
 
 class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     // MARK: - Initialize variables to display label
-    var appTitle = "", appCat = "", appDesc = "", appPrice = 0, appImage = "", imgArr: [String] = []
+    var appID = "", appTitle = "", appCat = "", appDesc = "", appPrice = 0, appImage = "", imgArr: [String] = []
     
     // MARK: - Initilalize IBOutlet
     @IBOutlet weak var forCategory: UILabel!
@@ -137,8 +138,30 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
+    // MARK: - Function to show alert UI
+    func showAlertUI(headTitle: String, message: String, title: String) {
+        // create the alert
+        let alert = UIAlertController(title: headTitle, message: message, preferredStyle: UIAlertController.Style.alert)
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: title, style: UIAlertAction.Style.default, handler: nil))
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
     // MARK: - Function when add to wishlist is pressed
     @IBAction func addToWishlistPressed(_ sender: Any) {
+        let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist"
+        let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : "1", "app_id" : appID]
+        
+        Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
+            if response.result.isSuccess {
+                print("ini hasil response data: \(response.result)")
+            } else {
+                print("Error \(response.result.error)")
+            }
+        }
+        
         do {
             try self.realm.write {
                 if checkEmptyWishlist() {
@@ -149,28 +172,17 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
                     newItem.price = String(appPrice)
                     newItem.desc = appDesc
                     newItem.icon = appImage
+                    newItem.poster1 = imgArr[0]
+                    newItem.poster2 = imgArr[1]
+                    newItem.poster3 = imgArr[2]
                     realm.add(newItem)
                     
-                    // create the alert
-                    let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your wishlist", preferredStyle: UIAlertController.Style.alert)
-                    
-                    // add an action (button)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                    
-                    // show the alert
-                    self.present(alert, animated: true, completion: nil)
+                    showAlertUI(headTitle: "Sucessfully Added", message: "This product is successfully added to your wishlist", title: "OK")
                 } else {
                     let result = checkInsideWishlist()
                     if result {
                         // check if items already added to Wishlist
-                        // create the alert
-                        let alert = UIAlertController(title: "Already added", message: "This product already added to your wishlist", preferredStyle: UIAlertController.Style.alert)
-
-                        // add an action (button)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-
-                        // show the alert
-                        self.present(alert, animated: true, completion: nil)
+                        showAlertUI(headTitle: "Already Added", message: "This product already added to your wishlist", title: "OK")
                     } else {
                         let newItem = Wishlist()
                         newItem.name = appTitle
@@ -178,16 +190,12 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
                         newItem.price = String(appPrice)
                         newItem.desc = appDesc
                         newItem.icon = appImage
+                        newItem.poster1 = imgArr[0]
+                        newItem.poster2 = imgArr[1]
+                        newItem.poster3 = imgArr[2]
                         realm.add(newItem)
                         
-                        // create the alert
-                        let alert = UIAlertController(title: "Successfully Added", message: "This product is successfully added to your wishlist", preferredStyle: UIAlertController.Style.alert)
-                        
-                        // add an action (button)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                        
-                        // show the alert
-                        self.present(alert, animated: true, completion: nil)
+                        showAlertUI(headTitle: "Successfully Added", message: "This product is successfully added to your wishlist", title: "OK")
                     }
                 }
             }

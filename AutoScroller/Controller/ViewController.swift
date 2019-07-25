@@ -34,19 +34,19 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var productCount: Int = 0
         
     // MARK: - Set variable for slide show images, counter and the duration
-    let imgArr: [String] =  ["http://localhost/flipapp/assets/img/poster/default.jpg",
-                             "http://localhost/flipapp/assets/img/poster/default.jpg",
-                             "http://localhost/flipapp/assets/img/poster/default.jpg"]
+    let imgArr: [String] =  ["https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg",
+                             "https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg",
+                             "https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg"]
     var timer = Timer()
     var counter = 0
     
     
     // MARK: - Set variables to identify which app is selected
-    var tag = 0, toDetail = 0
+    var tag = 0, toDetail = 0, navTitle = ""
     
     
     // MARK: - Set variables for label that goes to AppDetailViewController
-    var labelTitle = "", labelDetail = "", picture = "", labelPrice = 0, labelCategory = ""
+    var labelTitle = "", labelDetail = "", picture = "", labelPrice = 0, labelCategory = "", ID = ""
     
     // MARK: - Set variables for identifer to AppDetailViewController and SummaryDetailViewController
     var identifier2 = 0
@@ -126,6 +126,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if segue.identifier == "detailApp" {
             // if user click the app
             let nextVC = segue.destination as! AppDetailViewController
+            nextVC.appID = ID
             nextVC.appTitle = labelTitle
             nextVC.appDesc = labelDetail
             nextVC.appPrice = labelPrice
@@ -137,6 +138,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         } else if segue.identifier == "summaryApp" {
             // if user click see all button
             let nextVC = segue.destination as! SummaryDetailViewController
+            nextVC.category = navTitle
             nextVC.productJSON = productJSON
             nextVC.identifier = identifier2
         }
@@ -145,18 +147,21 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     // MARK: - Function when button is pressed
     // when See All in top application is pressed
     @IBAction func topApplication(_ sender: Any) {
+        navTitle = "Top Application"
         identifier2 = 2
         performSegue(withIdentifier: "summaryApp", sender: self)
     }
     
     // when See All in top rated is pressed
     @IBAction func topRated(_ sender: Any) {
+        navTitle = "Top Rated"
         identifier2 = 3
         performSegue(withIdentifier: "summaryApp", sender: self)
     }
     
     // when product in top application is pressed
     @IBAction func topAppDetail(_ sender: Any) {
+        ID = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_id"])"
         labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
         labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
         labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!
@@ -169,6 +174,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     // when product in top rated is pressed
     @IBAction func topRatedApp(_ sender: Any) {
+        ID = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_id"])"
         labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
         labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
         labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!

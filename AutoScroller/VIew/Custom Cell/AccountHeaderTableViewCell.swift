@@ -10,6 +10,7 @@ import UIKit
 
 class AccountHeaderTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var accountEmail: UILabel!
     @IBOutlet weak var accountName: UILabel!
     @IBOutlet weak var accountProfilePicture: UIImageView!
     override func awakeFromNib() {

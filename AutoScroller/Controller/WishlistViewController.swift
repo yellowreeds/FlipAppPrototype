@@ -9,6 +9,8 @@
 import UIKit
 import RealmSwift
 import SwiftyJSON
+import Alamofire
+import Toast_Swift
 
 class WishlistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -18,11 +20,20 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     // MARK: - Intialize variables for catch JSON
     var productJSON : JSON?
     
+    var wishlistJSON : JSON? {
+        didSet {
+            WishlistTableView.reloadData()
+        }
+    }
+    
     // MARK: - Initialize Realm
     let realm = try! Realm()
     
     // MARK: - Initialize index for segue
     var indexForSegue = 0
+    
+    // MARK: - Initialize wishlist id
+    var wishlistID = ""
     
     // MARK: - Initialize results for load data from Realm
     var wishlistResult: Results<Wishlist>?
@@ -33,6 +44,8 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     // MARK: - Set Initialview
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        getData()
         
         // MARK: Set and register the tableview
         // set delegate and data source
@@ -48,11 +61,25 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         
         // set refresh control
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refreshControl.addTarget(self, action: #selector(loadWishlist), for: UIControl.Event.valueChanged)
+        refreshControl.addTarget(self, action: #selector(loadWishlistFromAPI), for: UIControl.Event.valueChanged)
         WishlistTableView.addSubview(refreshControl)
         
         // call the function to load wishlist from realm to tableview
-        loadWishlist()
+        //loadWishlist()
+        wishlistResult = realm.objects(Wishlist.self)
+        loadWishlistFromAPI()
+    }
+    
+    // MARK: - To load wishlist from API
+    func getData() {
+        Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/wishlist?fliptoken=flip123&user_id=1", method: .get).responseJSON {
+            response in
+            if response.result.isSuccess {
+                self.wishlistJSON = JSON(response.result.value!)
+            } else {
+                print("Error: \(response.result.error)")
+            }
+        }
     }
     
     // MARK: - To load wishlist from Realm
@@ -62,29 +89,35 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         refreshControl.endRefreshing()
     }
     
+    // MARK: - To load wishlist from API
+    @objc private func loadWishlistFromAPI() {
+        getData()
+        self.WishlistTableView.reloadData()
+        refreshControl.endRefreshing()
+    }
+    
     // MARK: - Set tableView
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return wishlistResult?.count ?? 1
+        return wishlistJSON?["data"].count ?? 0
     }
     
     // set item on each cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        wishlistID = "\(wishlistJSON!["data"][indexPath.row]["wishlist_id"])"
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryApp", for: indexPath) as! CustomSummaryAppTableViewCell
         
-        if let wh = wishlistResult?[indexPath.row] {
-            cell.appCategory.text = wh.category
-            
-            let url = URL(string: wh.icon)
-            let data = try? Data(contentsOf: url!)
-            
-            if let imageData = data {
-                cell.appIcon.image = UIImage(data: imageData)
-            }
-            cell.appPrice.text = wh.price
-            cell.appName.text = wh.name
-            
+        cell.appCategory.text = "\(wishlistJSON!["data"][indexPath.row]["category_name"])"
+        let url = URL(string: "\(wishlistJSON!["data"][indexPath.row]["app_poster"])")
+        let data = try? Data(contentsOf: url!)
+
+        if let imageData = data {
+            cell.appIcon.image = UIImage(data: imageData)
         }
+        cell.appPrice.text = "\(wishlistJSON!["data"][indexPath.row]["app_price"])"
+        cell.appName.text = "\(wishlistJSON!["data"][indexPath.row]["app_name"])"
         return cell
     }
     
@@ -97,15 +130,27 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                 
                 // add the actions (buttons)
                 alert.addAction(UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: { action in
-                    do {
-                        try self.realm.write {
-                            self.realm.delete(wishlist)
+                    self.view.makeToastActivity(.center)
+                    
+                    let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist/delete"
+                    let parameters: Parameters = ["fliptoken" : "flip123", "wishlist_id" : self.wishlistID]
+                    
+                    Alamofire.request(url, method: .post, parameters: parameters).responseJSON { response in
+                        if response.result.isSuccess {
+                            do {
+                                try self.realm.write {
+                                    self.realm.delete(wishlist)
+                                }
+                            } catch {
+                                print("Error write realm, \(error)")
+                            }
+                            self.loadWishlistFromAPI()
+                            self.view.hideToastActivity()
+                        } else {
+                            print("Error \(response.result.error)")
                         }
-                    } catch {
-                        print("Error write realm, \(error)")
                     }
                     completionHandler(true)
-                    self.WishlistTableView.reloadData()
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {action in
                     completionHandler(false)

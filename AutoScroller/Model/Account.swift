@@ -10,6 +10,7 @@ import Foundation
 import RealmSwift
 
 class Account: Object {
+    @objc dynamic var userID: String = ""
     @objc dynamic var fullName: String = ""
     @objc dynamic var phoneNumber: String = ""
     @objc dynamic var username: String = ""
@@ -17,6 +18,7 @@ class Account: Object {
     @objc dynamic var gitAddress: String = ""
     @objc dynamic var emailAddress: String = ""
     @objc dynamic var companyName: String = ""
-    
+    @objc dynamic var avatar: String = ""
+    @objc dynamic var joinedTime: String = ""
 }
 

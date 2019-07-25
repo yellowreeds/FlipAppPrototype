@@ -93,9 +93,8 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
     // when items is selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         indexForSegue = indexPath.row
-        if appTitle.count < 1 {
+        if productJSON!["data"].count < 1 {
             self.view.makeToast("No Items", duration: 3.0, position: .bottom)
-            tableView.deselectRow(at: indexPath, animated: true)
         } else {
             performSegue(withIdentifier: "detailApp", sender: self)
         }
@@ -118,13 +117,14 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - Prepare for segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
-        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_1"])")
-        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_2"])")
-        destinationVC.imgArr.append("\(productJSON![indexForSegue]["app_screen_capture_3"])")
-        destinationVC.appTitle = "\(productJSON![indexForSegue]["app_name"])"
-        destinationVC.appCat = "\(productJSON![indexForSegue]["category_name"])"
-        destinationVC.appPrice = Int("\(productJSON![indexForSegue]["app_price"])")!
-        destinationVC.appDesc = "\(productJSON![indexForSegue]["app_desc"])"
+        destinationVC.appID = "\(productJSON!["data"][indexForSegue]["app_id"])"
+        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_1"])")
+        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_2"])")
+        destinationVC.imgArr.append("\(productJSON!["data"][indexForSegue]["app_screen_capture_3"])")
+        destinationVC.appTitle = "\(productJSON!["data"][indexForSegue]["app_name"])"
+        destinationVC.appCat = "\(productJSON!["data"][indexForSegue]["category_name"])"
+        destinationVC.appPrice = Int("\(productJSON!["data"][indexForSegue]["app_price"])")!
+        destinationVC.appDesc = "\(productJSON!["data"][indexForSegue]["app_desc"])"
     }
 
 }
