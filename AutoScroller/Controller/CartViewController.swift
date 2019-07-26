@@ -14,10 +14,10 @@ import Toast_Swift
 
 class CartViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    // MARK: - Initialize refresh control
+    // MARK: - REFRESH CONTROL
     var refreshControl = UIRefreshControl()
     
-    // MARK: - Intialize variables for catch JSON
+    // MARK: - HOLD JSON
     var productJSON : JSON?
     var productCount : Int = 0
     
@@ -27,36 +27,34 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    // MARK: - Initialize cart id
+    // MARK: - INIT CART ID
     var cartID = ""
     
-    // MARK: - Initialize Realm
+    // MARK: - INIT REALM
     let realm = try! Realm()
     
-    // MARK: - Initialize variables for identification
+    // MARK: - VARIABLES FOR INDENTIFICATION
     var indexForSegue = 0
     
-    // MARK: - Initialize result to load Realm
+    // MARK: - HOLD REALM
     var cartResult: Results<Cart>?
-    
     var accountResult: Results<Account>?
-    var userid: String = ""
     
+    // MARK: - SET USER ID
+    var userid: String = ""
     override func viewWillAppear(_ animated: Bool) {
         accountResult = realm.objects(Account.self)
         if accountResult!.count > 0 {
             if let account = accountResult?[0] {
                 userid = account.userID
-                print("user id: \(userid)")
             }
         }
     }
     
-    
-    // MARK: - IBOutlet for cart table view
+    // MARK: - IBOUTLET
     @IBOutlet weak var cartTableView: UITableView!
 
-    // MARK: - Set up the view
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -83,7 +81,7 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         loadCartFromAPI()
     }
     
-    // MARK: - To load cart from API
+    // MARK: - LOAD API
     func getData() {
         Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/cart?fliptoken=flip123&user_id=\(userid)", method: .get).responseJSON {
             response in
@@ -96,21 +94,21 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    // MARK: - Function to load cart from Realm
+    // MARK: - LOAD FROM REALM
     @objc private func loadCart() {
         cartResult = realm.objects(Cart.self)
         self.cartTableView.reloadData()
         refreshControl.endRefreshing()
     }
     
-    // MARK: - To load wishlist from API
+    // MARK: - RELOAD FROM API
     @objc private func loadCartFromAPI() {
         getData()
         self.cartTableView.reloadData()
         refreshControl.endRefreshing()
     }
     
-    // MARK: - set table view
+    // MARK: - TABLE VIEW
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cartJSON?["data"].count ?? 0
@@ -143,7 +141,6 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    // MARK: - Swipe to delete function
     // set swipe to delete function
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
@@ -192,7 +189,7 @@ class CartViewController: UIViewController, UITableViewDelegate, UITableViewData
         return swipeActionConfig
     }
     
-    // prepare the segue when cell is selected
+    // MARK: - PREPARE FOR SEGUE
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
         destinationVC.appID = "\(cartJSON!["data"][indexForSegue]["app_id"])"

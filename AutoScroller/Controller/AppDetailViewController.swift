@@ -13,10 +13,10 @@ import Alamofire
 
 class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    // MARK: - Initialize variables to display label
+    // MARK: - VARIABLES TO DISPLAY LABEL
     var appID = "", appTitle = "", appCat = "", appDesc = "", appPrice = 0, appImage = "", imgArr: [String] = []
     
-    // MARK: - Initilalize IBOutlet
+    // MARK: - IBOUTLET
     @IBOutlet weak var forCategory: UILabel!
     @IBOutlet weak var forTitle: UILabel!
     @IBOutlet weak var forPrice: UILabel!
@@ -25,29 +25,28 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
     @IBOutlet weak var pageView: UIPageControl!
     @IBOutlet weak var scrollView: UIScrollView!
     
-    
+    // MARK: - HOLD REALM
     var accountResult: Results<Account>?
-    var userid: String = ""
     
+    // MARK: - SET USER ID
+    var userid: String = ""
     override func viewWillAppear(_ animated: Bool) {
         accountResult = realm.objects(Account.self)
         if accountResult!.count > 0 {
             if let account = accountResult?[0] {
                 userid = account.userID
-                print("user id: \(userid)")
             }
         }
     }
     
-    
-    // MARK: - Initialize Realm
+    // MARK: - INIT REALM
     let realm = try! Realm()
     
-    // MARK: - Initialize variables for slideshow
+    // MARK: - INIT SLIDESHOW
     var timer = Timer()
     var counter = 0, tag = 0
     
-    // MARK: - Set the view when loaded
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         // set the slideshow
@@ -74,7 +73,18 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         forCategory.text = appCat
     }
     
-    // MARK: - Function when add to cart is pressed
+    // MARK: - ALERT UI
+    func showAlertUI(headTitle: String, message: String, title: String) {
+        // create the alert
+        let alert = UIAlertController(title: headTitle, message: message, preferredStyle: UIAlertController.Style.alert)
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: title, style: UIAlertAction.Style.default, handler: nil))
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: - CART
+    // Function when add to cart is pressed
     @IBAction func addToCartPressed(_ sender: Any) {
         let url = "https://amentiferous-grass.000webhostapp.com/api/cart"
         let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : userid, "app_id" : appID]
@@ -129,7 +139,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
 
-    // function to check if same data exists
+    // function to check if same data exists inside cart
     func checkInsideCart() -> Bool {
         let cartResult = realm.objects(Cart.self)
         for n in 0...cartResult.count-1 {
@@ -140,7 +150,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         return false
     }
     
-    // function to check if data is empty
+    // function to check if data is empty inside cart
     func checkEmptyCart() -> Bool {
         let cartResult = realm.objects(Cart.self)
         if cartResult.count == 0 {
@@ -150,18 +160,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
-    // MARK: - Function to show alert UI
-    func showAlertUI(headTitle: String, message: String, title: String) {
-        // create the alert
-        let alert = UIAlertController(title: headTitle, message: message, preferredStyle: UIAlertController.Style.alert)
-        // add an action (button)
-        alert.addAction(UIAlertAction(title: title, style: UIAlertAction.Style.default, handler: nil))
-        // show the alert
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    
-    // MARK: - Function when add to wishlist is pressed
+    // MARK: - WISHLIST
     @IBAction func addToWishlistPressed(_ sender: Any) {
         let url = "https://amentiferous-grass.000webhostapp.com/api/wishlist"
         let parameters: Parameters = ["fliptoken" : "flip123", "user_id" : userid, "app_id" : appID]
@@ -216,7 +215,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
-    // function to check if same data exists
+    // function to check if same data exists in wishlist
     func checkInsideWishlist() -> Bool {
         let wishlistResult = realm.objects(Wishlist.self)
         for n in 0...wishlistResult.count-1 {
@@ -227,7 +226,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         return false
     }
    
-    // function to check if data is empty
+    // function to check if data is empty in wishlist
     func checkEmptyWishlist() -> Bool {
         let wishlistResult = realm.objects(Wishlist.self)
         if wishlistResult.count == 0 {
@@ -237,7 +236,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
-    // MARK: - Function to change image in slideshow
+    // MARK: - SLIDESHOW
     @objc func changeImage() {
         if counter < imgArr.count {
             let index = IndexPath.init(item: counter, section: 0)
@@ -253,7 +252,7 @@ class AppDetailViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
-    // MARK: - Set the collection view for slideshow
+    // MARK: - COLLECTION VIEW FOR SLIDESHOW
     // number of items
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return 3

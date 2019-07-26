@@ -13,7 +13,7 @@ import Toast_Swift
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    // MARK: - Set IBOulet
+    // MARK: - IBOUTLET
     @IBOutlet weak var sliderCollectionView: UICollectionView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageView: UIPageControl!
@@ -22,7 +22,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var midLabel: UILabel!
     @IBOutlet weak var midCollection: UICollectionView!
     
-    // MARK: - Set variable for JSON and count data from JSON
+    // MARK: - HOLD JSON
     var productJSON : JSON? {
         didSet {
             topCollection.reloadData()
@@ -30,12 +30,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             sliderCollectionView.reloadData()
         }
     }
-    
-    var userid: String = ""
-    
     var productCount: Int = 0
-        
-    // MARK: - Set variable for slide show images, counter and the duration
+    
+    // MARK: - SLIDE SHOW IMAGES, COUNTER AND TIMER
     let imgArr: [String] =  ["https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg",
                              "https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg",
                              "https://amentiferous-grass.000webhostapp.com/assets/img/poster/default.jpg"]
@@ -43,22 +40,23 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var counter = 0
     
     
-    // MARK: - Set variables to identify which app is selected
+    // MARK: - IDENTIFYING SELECTED APP
     var tag = 0, toDetail = 0, navTitle = ""
     
     
-    // MARK: - Set variables for label that goes to AppDetailViewController
+    // MARK: - VARIABLES TO APP DETAIL VIEW CONTROLLER
     var labelTitle = "", labelDetail = "", picture = "", labelPrice = 0, labelCategory = "", ID = ""
     
-    // MARK: - Set variables for identifer to AppDetailViewController and SummaryDetailViewController
+    // MARK: - IDENTIFIER TO APP DETAIL VIEW CONTROLLER AND SUMMARY DETAIL VIEW CONTROLLER
     var identifier2 = 0
     
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
-        // MARK: Setting homescreen
         
         // get data from API
         getData()
+        
         // create toast activity to wait for API to load
         self.view.makeToastActivity(.center)
         
@@ -84,7 +82,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     }
 
-    // MARK: - Function to get data from JSON
+    // MARK: - GET JSON
     func getData() {
         Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/app?fliptoken=flip123", method: .get).responseJSON {
             response in
@@ -92,6 +90,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 self.productJSON = JSON(response.result.value!)
                 self.productCount = self.productJSON!["data"].count
                 self.sendToWishlistViewController()
+                
                 // to hide toast activity if json is fully loaded.
                 if self.productCount > 0 {
                     self.view.hideToastActivity()
@@ -107,8 +106,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }
     
-    
-    // MARK: - Functions to send JSON to another controller
+    // MARK: - SEND JSON
     // to category
     func sendToCategoryViewController() {
         let navControllerCategory = self.tabBarController!.viewControllers![1] as! UINavigationController
@@ -130,7 +128,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         toControllerWishlist.productJSON = productJSON!["data"]
     }
     
-    // MARK: - Function to prepare segue to AppDetailViewController and SummaryViewController
+    // MARK: - PREPARE SEGUE TO APP DETAIL VIEW CONTROLLER AND SUMMARY VIEW CONTROLLER
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "detailApp" {
             // if user click the app
@@ -153,7 +151,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }
     
-    // MARK: - Function when button is pressed
+    // MARK: - BUTTON PRESSED
     // when See All in top application is pressed
     @IBAction func topApplication(_ sender: Any) {
         navTitle = "Top Application"
@@ -168,33 +166,31 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         performSegue(withIdentifier: "summaryApp", sender: self)
     }
     
+    func callElement(index: Int) {
+        ID = "\(productJSON!["data"][index]["app_id"])"
+        labelTitle = "\(productJSON!["data"][index]["app_name"])"
+        labelDetail = "\(productJSON!["data"][index]["app_desc"])"
+        labelPrice = Int("\(productJSON!["data"][index]["app_price"])")!
+        labelCategory = "\(productJSON!["data"][index]["category_name"])"
+        picture = "\(productJSON!["data"][index]["app_poster"])"
+        toDetail = index
+    }
+    
     // when product in top application is pressed
     @IBAction func topAppDetail(_ sender: Any) {
-        ID = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_id"])"
-        labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
-        labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
-        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!
-        labelCategory = "\(productJSON!["data"][(sender as AnyObject).tag!]["category_name"])"
-        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_poster"])"
-        toDetail = (sender as AnyObject).tag!
+        callElement(index: (sender as AnyObject).tag!)
         performSegue(withIdentifier: "detailApp", sender: self)
     }
     
     
     // when product in top rated is pressed
     @IBAction func topRatedApp(_ sender: Any) {
-        ID = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_id"])"
-        labelTitle = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_name"])"
-        labelDetail = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_desc"])"
-        labelPrice = Int("\(productJSON!["data"][(sender as AnyObject).tag!]["app_price"])")!
-        labelCategory = "\(productJSON!["data"][(sender as AnyObject).tag!]["category_name"])"
-        picture = "\(productJSON!["data"][(sender as AnyObject).tag!]["app_poster"])"
+        callElement(index: (sender as AnyObject).tag!)
         performSegue(withIdentifier: "detailApp", sender: self)
-        
     }
     
     
-    // MARK: - Function to change image in slideshow
+    // MARK: - CHANGE IMAGE
     @objc func changeImage() {
         if counter < imgArr.count {
             let index = IndexPath.init(item: counter, section: 0)
@@ -211,7 +207,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     
-    // MARK: - Set up the collection view
+    // MARK: - COLLECTION VIEW
     // function to set how many items in slide show, top rated, and top application
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == self.sliderCollectionView {

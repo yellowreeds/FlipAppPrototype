@@ -11,25 +11,22 @@ import Alamofire
 
 class CategoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    // MARK: - IBOutlet for category table
+    // MARK: - IBOUTLET
     @IBOutlet weak var categoryTable: UITableView!
     
-    // MARK: - Initialize variables to hold JSON
+    // MARK: - HOLD JSON
     var productJSON : JSON?
-    
     private var categoryJSON : JSON? {
         didSet {
             categoryTable.reloadData()
         }
     }
-    
-    // MARK: - Innitialize variables to count JSON
     var categoryCount : Int = 0
     
-    // MARK: - Initialize variables to identify index
+    // MARK: - IDENTIFY INDEX
     var indeks : Int = 0
     
-    // MARK: - Set up view
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,6 +42,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
         categoryTable.separatorStyle = .none
     }
     
+    // MARK: - GET API
     func getData() {
         Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/category?fliptoken=flip123", method: .get).responseJSON {
             response in
@@ -56,7 +54,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    // MARK: - Set tableview
+    // MARK: - TABLE VIEW
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categoryJSON?["data"].count ?? 0

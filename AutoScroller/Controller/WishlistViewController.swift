@@ -14,10 +14,10 @@ import Toast_Swift
 
 class WishlistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    // MARK: - Initialize refreshcontrol
+    // MARK: - REFRESH CONTROL
     var refreshControl = UIRefreshControl()
     
-    // MARK: - Intialize variables for catch JSON
+    // MARK: - HOLD JSON
     var productJSON : JSON?
     var productCount : Int = 0
     
@@ -27,42 +27,40 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    
-    
-    // MARK: - Initialize Realm
+    // MARK: - INIT REALM
     let realm = try! Realm()
     
-    // MARK: - Initialize index for segue
+    // MARK: - INDEX FOR SEGUE
     var indexForSegue = 0
     
-    // MARK: - Initialize wishlist id
+    // MARK: - WISHLIST ID
     var wishlistID = ""
     
-    // MARK: - Initialize results for load data from Realm
+    // MARK: - HOLD REALM
     var wishlistResult: Results<Wishlist>?
     var accountResult: Results<Account>?
-    var userid: String = ""
     
+    // MARK: - SET USER ID
+    var userid: String = ""
     override func viewWillAppear(_ animated: Bool) {
         accountResult = realm.objects(Account.self)
         if accountResult!.count > 0 {
             if let account = accountResult?[0] {
                 userid = account.userID
-                print("user id: \(userid)")
             }
         }
     }
     
-    // MARK: - Set IBOutlet for tableview
+    // MARK: - IBOUTLET
     @IBOutlet weak var WishlistTableView: UITableView!
     
     
-    
-    // MARK: - Set Initialview
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
         getData()
+        
         productCount = productJSON!.count
         // MARK: Set and register the tableview
         // set delegate and data source
@@ -87,7 +85,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         loadWishlistFromAPI()
     }
     
-    // MARK: - To load wishlist from API
+    // MARK: - LOAD WISHLIST API
     func getData() {
         Alamofire.request("https://amentiferous-grass.000webhostapp.com/api/wishlist?fliptoken=flip123&user_id=\(userid)", method: .get).responseJSON {
             response in
@@ -99,21 +97,21 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    // MARK: - To load wishlist from Realm
+    // MARK: - LOAD WISHLIST REALM
     @objc private func loadWishlist() {
         wishlistResult = realm.objects(Wishlist.self)
         self.WishlistTableView.reloadData()
         refreshControl.endRefreshing()
     }
     
-    // MARK: - To load wishlist from API
+    // MARK: - RELOAD WISHLIST API
     @objc private func loadWishlistFromAPI() {
         getData()
         self.WishlistTableView.reloadData()
         refreshControl.endRefreshing()
     }
     
-    // MARK: - Set tableView
+    // MARK: - TABLE VIEW
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return wishlistJSON?["data"].count ?? 0
@@ -129,10 +127,10 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         cell.appCategory.text = "\(wishlistJSON!["data"][indexPath.row]["category_name"])"
         let url = URL(string: "\(wishlistJSON!["data"][indexPath.row]["app_poster"])")
         let data = try? Data(contentsOf: url!)
-
         if let imageData = data {
             cell.appIcon.image = UIImage(data: imageData)
         }
+        
         cell.appPrice.text = "\(wishlistJSON!["data"][indexPath.row]["app_price"])"
         cell.appName.text = "\(wishlistJSON!["data"][indexPath.row]["app_name"])"
         return cell
@@ -218,11 +216,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                 destinationVC.appTitle = "\(wishlistJSON!["data"][indexForSegue]["app_name"])"
                 destinationVC.appCat = "\(wishlistJSON!["data"][indexForSegue]["category_name"])"
                 destinationVC.appPrice = Int("\(wishlistJSON!["data"][indexForSegue]["app_price"])")!
-                
-                
             }
-            
         }
-        
     }
 }

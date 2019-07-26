@@ -14,38 +14,40 @@ import Toast_Swift
 
 class LoginViewController: UIViewController {
     
-    //MARK: - Declare variables to hold JSON
+    //MARK: - HOLD JSON
     var userJSON: JSON?
     
-    //MARK: - Realm
+    //MARK: - INIT REALM
     let realm = try! Realm()
     
-    //MARK: - IBOutlet label
+    //MARK: - IBOUTLET
+    // MARK: Label
     @IBOutlet weak var passwordLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var phoneNumberLabel: UILabel!
     
-    // MARK: - IBOutlet buttonLabel
+    // MARK: ButtonLabel
     @IBOutlet weak var alreadyHaveAccountButtonLabel: UIButton!
     @IBOutlet weak var loginButtonLabel: UIButton!
     @IBOutlet weak var registerButtonLabel: UIButton!
     
-    // MARK: - IBOUtlet textfield
+    // MARK: TextField
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var nameField: UITextField!
     @IBOutlet weak var phoneNumberField: UITextField!
     
-    // MARK: - Status login
+    // MARK: - LOGIN STATUS
     var status = false
     var register = true
     var credentialStatus = false
     
-    // MARK: - Set the view
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // hide element
         nameField.isHidden = true
         phoneNumberField.isHidden = true
         nameLabel.isHidden = true
@@ -54,7 +56,7 @@ class LoginViewController: UIViewController {
         
     }
     
-    // MARK: - Function validate email
+    // MARK: - VALIDATE EMAIL
     func isValidEmail(testStr: String) -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
@@ -62,7 +64,7 @@ class LoginViewController: UIViewController {
         return result
     }
     
-    // MARK: - Function validate number
+    // MARK: - VALIDATE NUMBER
     func isValidNumber(value: String) -> Bool {
         let phoneRegEx = "^[0-9]{9,12}$"
         let phoneTest = NSPredicate(format: "SELF MATCHES %@", phoneRegEx)
@@ -70,7 +72,7 @@ class LoginViewController: UIViewController {
         return result
     }
     
-    // MARK: - Function register
+    // MARK: - REGISTER USER
     func registerUser(username: String, email: String, phone: String, password: String) {
         let url = "https://amentiferous-grass.000webhostapp.com/api/auth/signup"
         
@@ -84,7 +86,7 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    // MARK: - Function login
+    // MARK: - LOGIN USER
     func loginUser(email: String, password: String) {
         let url = "https://amentiferous-grass.000webhostapp.com/api/auth/login"
         
@@ -104,7 +106,7 @@ class LoginViewController: UIViewController {
         }
     }
     
-    // MARK: - Function to hide/show element
+    // MARK: - SHOW/HIDE ELEMENT
     func elementSettingLogin(condition: Bool) {
         passwordField.isHidden = condition
         emailField.isHidden = condition
@@ -112,10 +114,12 @@ class LoginViewController: UIViewController {
         emailLabel.isHidden = condition
     }
     
-    // MARK: - Function when login button pressed
+    // MARK: - LOGIN BUTTON PRESSED
     @IBAction func loginButtonPressed(_ sender: Any) {
         alreadyHaveAccountButtonLabel.isHidden = true
         if emailField.text!.isEmpty || passwordField.text!.isEmpty {
+            // if email and password empty
+            // create alert
             let alert = UIAlertController(title: "Please fill the form!", message: "Please fill the form to continue", preferredStyle: UIAlertController.Style.alert)
             
             // add an action (button)
@@ -125,13 +129,15 @@ class LoginViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
         } else {
             if status == false {
+                // if user no login
                 let vc = self.navigationController?.viewControllers[0] as! AccountViewController
                 vc.status = true
                 loginUser(email: emailField.text!, password: passwordField.text!)
                 self.view.makeToastActivity(.center)
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                    // Put your code which should be executed with a delay here
                     if self.credentialStatus {
+                        //if everything valid
                         do {
                             try self.realm.write {
                                 let newItem = Account()
@@ -148,7 +154,9 @@ class LoginViewController: UIViewController {
                         self.view.hideToastActivity()
                         self.navigationController?.popViewController(animated: true)
                     } else {
+                        // if everything does not valid
                         self.view.hideToastActivity()
+                        
                         // create the alert
                         let alert = UIAlertController(title: "Incorrect Credentials", message: "Your password/login is invalid", preferredStyle: UIAlertController.Style.alert)
                         
@@ -163,8 +171,9 @@ class LoginViewController: UIViewController {
         }
     }
     
-    // MARK: - Function when register button pressed
+    // MARK: - REGISTER BUTTON
     @IBAction func registerButtonPressed(_ sender: Any) {
+        // show element
         nameField.isHidden = false
         phoneNumberField.isHidden = false
         nameLabel.isHidden = false
@@ -173,6 +182,8 @@ class LoginViewController: UIViewController {
         loginButtonLabel.isHidden = true
         
         if nameField.text!.isEmpty || emailField.text!.isEmpty || passwordField.text!.isEmpty || phoneNumberField.text!.isEmpty {
+            // if field empty
+            
             // create the alert
             let alert = UIAlertController(title: "Please fill the form!", message: "Please fill the form to continue", preferredStyle: UIAlertController.Style.alert)
             
@@ -182,21 +193,35 @@ class LoginViewController: UIViewController {
             // show the alert
             self.present(alert, animated: true, completion: nil)
         } else {
-            registerUser(username: nameField.text!, email: emailField.text!, phone: phoneNumberField.text!, password: passwordField.text!)
-            self.view.makeToastActivity(.center)
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                // Put your code which should be executed with a delay here
-                self.view.hideToastActivity()
-                self.loginButtonLabel.isHidden = false
-                self.nameField.isHidden = true
-                self.phoneNumberField.isHidden = true
-                self.nameLabel.isHidden = true
-                self.phoneNumberLabel.isHidden = true
-                self.alreadyHaveAccountButtonLabel.isHidden = true
-            })
+            // if field is not empty
+            if isValidNumber(value: phoneNumberField.text!) && isValidEmail(testStr: emailField.text!) {
+                // if email and phone number correct
+                registerUser(username: nameField.text!, email: emailField.text!, phone: phoneNumberField.text!, password: passwordField.text!)
+                self.view.makeToastActivity(.center)
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                    // Put your code which should be executed with a delay here
+                    self.view.hideToastActivity()
+                    self.loginButtonLabel.isHidden = false
+                    self.nameField.isHidden = true
+                    self.phoneNumberField.isHidden = true
+                    self.nameLabel.isHidden = true
+                    self.phoneNumberLabel.isHidden = true
+                    self.alreadyHaveAccountButtonLabel.isHidden = true
+                })
+            } else {
+                // create the alert
+                let alert = UIAlertController(title: "Not Valid", message: "Email / Phone number is not in valid form", preferredStyle: UIAlertController.Style.alert)
+                
+                // add an action (button)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                
+                // show the alert
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
     
+    // MARK: - ALREADY HAVE ACCOUNT
     @IBAction func alreadyHaveAccountButtonPressed(_ sender: Any) {
         loginButtonLabel.isHidden = false
         nameField.isHidden = true

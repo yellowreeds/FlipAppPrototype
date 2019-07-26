@@ -3,7 +3,7 @@
 //  AutoScroller
 //
 //  Created by Aria Bisma Wahyutama on 02/07/19.
-//  Copyright © 2019 SHUBHAM AGARWAL. All rights reserved.
+//  Copyright © 2019 ARIA BISMA WAHYUTAMA. All rights reserved.
 //
 
 import Foundation

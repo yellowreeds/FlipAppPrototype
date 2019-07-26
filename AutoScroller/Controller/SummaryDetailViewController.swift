@@ -13,19 +13,19 @@ import Toast_Swift
 
 class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    // MARK: - Initialize variables for categories input
+    // MARK: - VARIABLES FOR CATEGORIES
     var identifier = 0, index = 0, indexForSegue = 0, category = ""
     
-    // MARK: - Initialize array for displaying in tableview
+    // MARK: - ARRAY FOR TABLEVIEW
     var appTitle: [String] = [], price: [String] = [], image: [String] = [], appID: [String] = [], appScreenshoot1: [String] = [], appScreenshoot2: [String] = [], appScreenshoot3: [String] = [], appDesc: [String] = []
     
-    // MARK: - Initialize variables for JSON
+    // MARK: - HOLD JSON
     var productJSON : JSON?
     
-    // MARK: - Initialize IBOutlet
+    // MARK: - IBOUTLET
     @IBOutlet weak var appTableView: UITableView!
     
-    // MARK: - Set the view
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         // set the title in navigation bar
@@ -44,7 +44,7 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         
     }
     
-    // MARK: - Set tableview
+    // MARK: - TABLE VIEW
     // set item on cells
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryApp", for: indexPath) as! CustomSummaryAppTableViewCell
@@ -122,7 +122,7 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     
-    // MARK: - Prepare for segue
+    // MARK: - PREPARE FOR SEGUE
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! AppDetailViewController
         if identifier == 4 {
@@ -144,7 +144,5 @@ class SummaryDetailViewController: UIViewController, UITableViewDelegate, UITabl
             destinationVC.appPrice = Int("\(productJSON!["data"][indexForSegue]["app_price"])")!
             destinationVC.appDesc = "\(productJSON!["data"][indexForSegue]["app_desc"])"
         }
-        
     }
-
 }

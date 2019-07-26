@@ -11,43 +11,42 @@ import RealmSwift
 
 class AccountViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    // MARK: - Initialize results for load data from Realm
+    // MARK: - HOLD REALM
     var accountResult: Results<Account>?
     
-    // MARK: - Variables for table header
+    // MARK: - VARIABLES FOR TABLE HEADER
     var useremail: String = ""
     var username: String = ""
     var profilePicture: String = ""
     
-    // MARK: - IBOutlet for tableview
+    // MARK: - IBOUTLET
     @IBOutlet weak var accountTableView: UITableView!
     
-    // MARK: - Initialize Realm
+    // MARK: - INIT REALM
     let realm = try! Realm()
     
-    // MARK: - Initialize menu for account settings
+    // MARK: - INIT MENU AND ICON
     let menu = ["Account", "Edit Profile", "Help", "Logout"]
     let menuIcon = ["accountsetting", "accountedit", "help", "logout"]
     
-    // MARK: - Initialize variable for indentification
+    // MARK: - VARIABLES FOR IDENTIFICATION
     var identifier = 0
     var status = false
 
-    // MARK: set the view
+    // MARK: - VIEW WILL APPEAR
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         accountTableView.reloadData()
         
     }
     
+    // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         accountResult = realm.objects(Account.self)
         // set delegate and data source
         accountTableView.delegate = self
         accountTableView.dataSource = self
-        
-        
         
         
         // register custom cell content
@@ -58,7 +57,7 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
-    // MARK: - Set tableview
+    // MARK: - TABLE VIEW
     // set number of row
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if accountResult!.count < 1 {
@@ -71,13 +70,14 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
     // set item on each cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if accountResult!.count < 1 {
-            // if user have not log in
+            // user no login
             let cell = tableView.dequeueReusableCell(withIdentifier: "accountTableViewCell", for: indexPath)
             cell.textLabel?.text = "Click here to login!"
             accountTableView.rowHeight = 150.0
             accountTableView.separatorStyle = .none
             return cell
         } else {
+            // user login
             let cell = tableView.dequeueReusableCell(withIdentifier: "accountCell", for: indexPath) as! AccountTableViewCell
             cell.accountSetting.text = menu[indexPath.row]
             cell.imageAccount.image = UIImage(named: menuIcon[indexPath.row])
@@ -89,8 +89,8 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
     // set header content
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableCell(withIdentifier: "accountHeaderCell") as! AccountHeaderTableViewCell
-        
         if accountResult!.count < 1 {
+            // user no login
             cell.accountName.text = "Please Login to Continue"
             cell.accountEmail.text = ""
             let url = URL(string: "https://amentiferous-grass.000webhostapp.com/assets/img/avatar/default.jpg")
@@ -100,26 +100,16 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             return cell
         } else {
+            //user login
             accountResult = realm.objects(Account.self)
-            if let account = accountResult?[0] {
-                cell.accountName.text = account.fullName
-                cell.accountEmail.text = account.username
-                let url = URL(string: account.avatar)
-                let data = try? Data(contentsOf: url!)
-                if let imageData = data {
-                    cell.accountProfilePicture.image = UIImage(data: imageData)
-                }
-                return cell
-            } else {
-                cell.accountName.text = "Please Login to Continue"
-                cell.accountEmail.text = ""
-                let url = URL(string: "https://amentiferous-grass.000webhostapp.com/assets/img/avatar/default.jpg")
-                let data = try? Data(contentsOf: url!)
-                if let imageData = data {
-                    cell.accountProfilePicture.image = UIImage(data: imageData)
-                }
-                return cell
+            cell.accountName.text = accountResult?[0].fullName
+            cell.accountEmail.text = accountResult?[0].username
+            let url = URL(string: (accountResult?[0].avatar)!)
+            let data = try? Data(contentsOf: url!)
+            if let imageData = data {
+                cell.accountProfilePicture.image = UIImage(data: imageData)
             }
+            return cell
         }
     }
     
@@ -135,6 +125,7 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
             performSegue(withIdentifier: "loginSegue", sender: self)
         } else {
             if indexPath.row == 3 {
+                
                 // create the alert
                 let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: UIAlertController.Style.alert)
                 
@@ -162,6 +153,7 @@ class AccountViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    // MARK: - PREPARE FOR SEGUE
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationViewController = segue.destination as! LoginViewController
         destinationViewController.status = false
